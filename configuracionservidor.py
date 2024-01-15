@@ -1,9 +1,9 @@
 
-user = 'gerald'
-database = 'finanzas1'
-host = 'database-3.cm2q0e3sd7mo.us-east-1.rds.amazonaws.com'
-password = '00100267590'
-passwordhost = 'mI00100267590'
+#user = 'gerald'
+#database = 'finanzas1'
+#host = 'database-3.cm2q0e3sd7mo.us-east-1.rds.amazonaws.com'
+#password = '00100267590'
+#passwordhost = 'mI00100267590'
 
 
 puser = 'gerald'
@@ -15,11 +15,11 @@ ppasswordhost = 'mI00100267590'
 
 ####Localhost
 
-#user = 'miturbides'
-#database = 'finanzas1'
-#host = '127.0.0.1'
-#password = '00100267590'
-#passwordhost = 'mI00100267590'
+user = 'root'
+database = 'generales'
+host = '127.0.0.1'
+password = '00100267590'
+passwordhost = 'mI00100267590'
 
 
 #puser = 'miturbides'

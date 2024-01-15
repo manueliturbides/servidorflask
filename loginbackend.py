@@ -8,6 +8,7 @@ from datetime import datetime
 from flask_mysql_connector import MySQL
 import configuracionservidor 
 import calendar
+from procconectar import conectUserDatabase
 
 
 loginbackend_api = Blueprint('loginbackend_api',__name__)
@@ -25,41 +26,129 @@ CORS(app)
 
 mysql = MySQL(app)
 
-@loginbackend_api.route("/api/loginbackend_buscardatosiniciales",methods=['POST','GET'])
-def loginbackend_buscardatosiniciales():
+@loginbackend_api.route("/api/configuredatabasegeneral",methods=['POST','GET'])
+def registerbackend_configuredatabasegeneral():
     
     aerror = False
     salida = {}
-    row = request.get_json()
     
-    if aerror == False:
-       if len(row['usuario']) == 0 or row['usuario'] == None or row['usuario'] == '':
-          aerror = True
-          error = "El campo del usuario no puede estar en blanco"
-
-    if aerror == False:
-       if len(row['password']) == 0 or row['password'] == None or row['password'] == '':
-          aerror = True
-          error = "El campo clave no puede estar en blanco"
     
     if aerror == False:
        try:
           conectar = mysql.connection
           mycursor = conectar.cursor(dictionary=True)
-          sql = "select * from usuarios where usuario = "+"'"+row['usuario']+"' and clave = "+"'"+row['password']+"'"
+          sql = "CREATE TABLE Users (id varchar(255),parent varchar(255),email varchar(255),password varchar(255));"
+          mycursor.execute(sql)
+          
+       
+          conectar.close()
+          res = make_response("Success",200)
+          return res
+       except Exception as e:
+          print(e)
+          aerror = True
+       
+    if aerror == True:
+       res = make_response(jsonify({"Error": "error"}),400)
+       return res; 
+
+@loginbackend_api.route("/api/registerbackend_validateemail",methods=['POST','GET'])
+def registerbackend_validateemail():
+    
+    aerror = False
+    error = {}
+    row = request.get_json()
+    
+    
+    if aerror == False:
+       try:
+          conectar = mysql.connection
+          mycursor = conectar.cursor(dictionary=True)
+          sql = "select * from users where email = "+"'"+row['email']+"'"
           mycursor.execute(sql)
           misusers = mycursor.fetchall()
+ 
+          if len(misusers) == 0:     
+             res = make_response(jsonify({"userExist":False}),200)
+             return res 
+          else:
+             aerror = True
+             error = {"userExist":True}
+       
+       
+          conectar.close()
+       
+       except Exception as e:
+          aerror = True
+          error = "Problemas para conectar la tabla "+str(e)        
+       
+    if aerror == True:
+       res = make_response(jsonify( error),400)
+       return res; 
+
+@loginbackend_api.route("/api/registerbackend_registrar",methods=['POST','GET'])
+def registerbackend_registrar():
+    
+    aerror = False
+    salida = {}
+    row = request.get_json()
+    
+    
+    if aerror == False:
+       try:
+          conectar = mysql.connection
+          mycursor = conectar.cursor()
+          sql = "insert into Users(id,parent,email,password) values(%s,%s,%s,%s)"
+          val = (row["id"],row["parent"],row["email"],row["password"])
+          mycursor.execute(sql,val)
+          conectar.commit()
+          
+          connectionUser = conectUserDatabase(row["parent"])
+          mycursor = connectionUser.cursor()
+
+          sql = "insert into Users(id,parent,nombre,apellido,email,password,permissions) values(%s,%s,%s,%s,%s,%s,%s)"
+          val = (row["id"],row["parent"],"","",row["email"],row["password"],"administrator")
+          mycursor.execute(sql,val)
+          connectionUser.commit()
+
+          sql = "insert into Company(nombre,direccion,telefono) values(%s,%s,%s)"
+          val = ('','','')
+          mycursor.execute(sql,val)
+          connectionUser.commit()
+
+
+          res = make_response(jsonify({"success":"success"}),200)
+          return res 
+              
+       except Exception as e:
+          print(e)
+          aerror = True
+          error = "Problemas para conectar la tabla "+str(e)        
+       
+    if aerror == True:
+       res = make_response(jsonify({"Error": error}),400)
+       return res; 
+
+@loginbackend_api.route("/api/loginbackend_login",methods=['POST','GET'])
+def loginbackend_login():
+    
+    aerror = False
+    salida = {}
+    row = request.get_json()
+    
+    
+    if aerror == False:
+       try:
+          conectar = mysql.connection
+          mycursor = conectar.cursor(dictionary=True)
+          sql = "select * from users where email = "+"'"+row['email']+"' and password = "+"'"+row['password']+"'"
+          mycursor.execute(sql)
+          miuser = mycursor.fetchall()
 
           if mycursor.rowcount != 0:
-             mycursor = conectar.cursor(dictionary=True)
-             sql = "select ncomp from varinicial"
-             mycursor.execute(sql)
-             micomp = mycursor.fetchall()
              
-                
-             salida['nombrenegocio'] = micomp
-             salida["usuarios"] = misusers
-             res = make_response(jsonify(salida),200)
+             
+             res = make_response(jsonify(miuser),200)
              return res 
           else:
              aerror = True
@@ -75,5 +164,3 @@ def loginbackend_buscardatosiniciales():
     if aerror == True:
        res = make_response(jsonify({"Error": error}),400)
        return res; 
-
-

@@ -8,14 +8,8 @@ from flask import make_response
 from flask import Blueprint,render_template
 from datetime import datetime
 from loginbackend import loginbackend_api
-from informemotoresfacturadosbackend import informesmotoresfacturadosbackend_api,modificachasisincautados_api
-from eliminarmotoresfacturadosbackend import eliminarmotoresfacturadosbackend_api
-from informeprestamosbackend import informesprestamosbackend_api
 from restaurarcancelarprestamobackend import restaurarcancelarprestamobackend_api
-from listarcanceladosporfechasbackend import listarcanceladosporfechasbackend_api
-from listadochasisincautadosbackend import listadochasisincautados_api
-from informemotoresbackend import informesmotoresbackend_api,modificasucursalbackend_api
-from informepagosbackend import informespagosbackend_api
+from usersconfigbackend import usersconfigbackend_api
 
 import configuracionservidor 
 
@@ -33,16 +27,7 @@ mysql = MySQL(application)
 CORS(application)
 
 application.register_blueprint(loginbackend_api)
-application.register_blueprint(informesmotoresfacturadosbackend_api)
-application.register_blueprint(eliminarmotoresfacturadosbackend_api)
-application.register_blueprint(informesprestamosbackend_api)
-application.register_blueprint(restaurarcancelarprestamobackend_api)
-application.register_blueprint(listadochasisincautados_api)
-application.register_blueprint(modificachasisincautados_api)
-application.register_blueprint(informesmotoresbackend_api)
-application.register_blueprint(modificasucursalbackend_api)
-application.register_blueprint(informespagosbackend_api)
-application.register_blueprint(listarcanceladosporfechasbackend_api)
+application.register_blueprint(usersconfigbackend_api)
 
 
 @application.route("/")
