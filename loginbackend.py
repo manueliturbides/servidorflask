@@ -24,18 +24,23 @@ mysql = MySQL(app)
 
 CORS(app)
 
-mysql = MySQL(app)
+mysqluser = MySQL(app)
 
 @loginbackend_api.route("/api/configuredatabasegeneral",methods=['POST','GET'])
 def registerbackend_configuredatabasegeneral():
     
+    import mysql.connector
+
     aerror = False
     salida = {}
     
-    
     if aerror == False:
        try:
-          conectar = mysql.connection
+          mydb = mysql.connector.connect(host="127.0.0.1",user="root",password="00100267590")
+          mycursor = mydb.cursor()
+          mycursor.execute("create database if not exists generales")
+      
+          conectar = mysqluser.connection
           mycursor = conectar.cursor(dictionary=True)
           sql = "CREATE TABLE Users (id varchar(255),parent varchar(255),email varchar(255),password varchar(255));"
           mycursor.execute(sql)
@@ -89,6 +94,9 @@ def registerbackend_validateemail():
 @loginbackend_api.route("/api/registerbackend_registrar",methods=['POST','GET'])
 def registerbackend_registrar():
     
+    #connectionUser = conectUserDatabase("manuel")
+    
+
     aerror = False
     salida = {}
     row = request.get_json()

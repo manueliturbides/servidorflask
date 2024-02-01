@@ -10,6 +10,7 @@ from datetime import datetime
 from loginbackend import loginbackend_api
 from restaurarcancelarprestamobackend import restaurarcancelarprestamobackend_api
 from usersconfigbackend import usersconfigbackend_api
+from solicitudprestamo import ingresosolicitudprestamo_api
 
 import configuracionservidor 
 
@@ -28,7 +29,7 @@ CORS(application)
 
 application.register_blueprint(loginbackend_api)
 application.register_blueprint(usersconfigbackend_api)
-
+application.register_blueprint(ingresosolicitudprestamo_api)
 
 @application.route("/")
 def servirpaginaestatica():
