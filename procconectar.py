@@ -1,3 +1,15 @@
+def conectServerDatabase():
+    import mysql.connector
+    
+    try:
+              #crear base de datos
+       mydb = mysql.connector.connect(host="127.0.0.1",user="root",password="00100267590")
+
+       return(mydb)
+    except Exception as e:
+      print(e +" error")
+      return("Error")
+
 def conectUserDatabase(nombre):    
     import mysql.connector
     
@@ -9,10 +21,12 @@ def conectUserDatabase(nombre):
        
        mydb=mysql.connector.connect(host="127.0.0.1",user="root",password="00100267590",port = 3306,database=nombre)
        mycursor = mydb.cursor(dictionary=True)
-       sqlCompany = "Create table if not exists Company(nombre varchar(255),direccion varchar(255),logo BLOB,telefono varchar(255));"
-       sqlUsers = "CREATE TABLE IF NOT EXISTS Users (id varchar(255) NOT NULL PRIMARY KEY,parent varchar(255),nombre varchar(255),apellido varchar(255),email varchar(255),password varchar(255),permissions varchar(255));"
-       mycursor.execute(sqlUsers)
-       mycursor.execute(sqlCompany)
+ 
+       mycursor.execute("Create table if not exists Company(nombre varchar(255),direccion varchar(255),logo BLOB,telefono varchar(255),pais varchar(255));")
+       mycursor.execute("CREATE TABLE IF NOT EXISTS Users (id varchar(255) NOT NULL PRIMARY KEY,parent varchar(255),nombre varchar(255),apellido varchar(255),email varchar(255),password varchar(255),permissions varchar(255));")
+       mycursor.execute("CREATE TABLE IF NOT EXISTS Facturas (id INT NOT NULL AUTO_INCREMENT primary key,plan varchar(255),total int,promocode varchar(255),suscriptionid varchar(255),fecha date);")
+
+
      
        mycursor.execute("create table if not exists solicit(id MEDIUMINT NOT NULL AUTO_INCREMENT,nosolic int(4),cedula varchar(15),\
        nombres varchar(100),apellidos varchar(100),provincia varchar(45),direccion varchar(100),telefono varchar(45),sector varchar(45),nacionalidad varchar(45),nombrepila varchar(45),\
@@ -43,5 +57,27 @@ def conectUserDatabase(nombre):
     except Exception as e:
       print(e)
       return(e)
+
+
+def conectUserDatabaseVendedor(nombre):    
+    import mysql.connector
+    
+    try:
+              #crear base de datos
+       mydb = mysql.connector.connect(host="127.0.0.1",user="root",password="00100267590")
+       mycursor = mydb.cursor()
+       mycursor.execute("create database if not exists "+nombre)
+       
+
+       mydb=mysql.connector.connect(host="127.0.0.1",user="root",password="00100267590",port = 3306,database=nombre)
+       mycursor = mydb.cursor(dictionary=True)
+       
+       mycursor.execute("Create table if not exists Clientes(id varchar(255) PRIMARY KEY,email varchar(255),producto varchar(255),fecha date);")
+       mycursor.execute("CREATE TABLE IF NOT EXISTS User (id varchar(255),Nombre varchar(255),email varchar(255),password varchar(255),promcode varchar(255),paypal varchar(255));")
+       mycursor.execute("CREATE TABLE IF NOT EXISTS Facturas (id INT NOT NULL AUTO_INCREMENT primary key,fecha date,numSuscrip int,retired varchar(255));")
+       return(mydb)
+    except Exception as e:
+      print(e +" error")
+      return("Error")
 
 

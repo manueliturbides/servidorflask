@@ -30,13 +30,28 @@ def usersconfigbackend_updateuser():
     error = {}
     row = request.get_json()
     
+    if "@" not in row["email"]:
+       aerror = True
+       aerror = "Email invalido"
+   
+
+    if len(row["password"]) < 5:
+       aerror = True
+       error = "Contraseña debe tener mas de 5 letras"
+
     if aerror == False:
        try:
-          print(row["id"]+" skksk")
+          conectar = mysql.connection
+          mycursor = conectar.cursor()
+          sql = "update users set email=%s,password=%s where id=%s"
+          val = (row["email"],row["password"],row["id"])
+          mycursor.execute(sql,val)
+          conectar.commit()
+
           connectionUser = conectUserDatabase(row["parent"])
           mycursor = connectionUser.cursor(dictionary=True)
-          sql = "update users set nombre=%s,apellido=%s,email=%s,password=%s where id=%s"
-          val = (row["nombre"],row["apellido"],row["email"],row["password"],row["id"])
+          sql = "update users set nombre=%s,apellido=%s,email=%s,password=%s,permissions=%s where id=%s"
+          val = (row["nombre"],row["apellido"],row["email"],row["password"],row["permissions"],row["id"])
           mycursor.execute(sql,val)
           connectionUser.commit()
 
@@ -95,6 +110,42 @@ def usersconfigbackend_adduser():
        res = make_response(jsonify( error),400)
        return res; 
 
+@usersconfigbackend_api.route("/api/usersconfigbackend_deleteuser",methods=['POST','GET'])
+def usersconfigbackend_deleteuser():    
+    aerror = False
+    error = {}
+    row = request.get_json()
+    
+   
+    if aerror == False:
+       try:
+          conectar = mysql.connection
+          mycursor = conectar.cursor()
+          sql = "delete from users where id = "+"'"+row["id"]+"'"
+          mycursor.execute(sql)
+          conectar.commit()
+
+          connectionUser = conectUserDatabase(row["parent"])
+          mycursor = connectionUser.cursor(dictionary=True)
+          sql = "delete from users where id = "+"'"+row["id"]+"'"
+          mycursor.execute(sql)
+          connectionUser.commit()
+
+
+
+          res = make_response(jsonify({"id":row["id"]}),200)
+          return res
+       
+       except Exception as e:
+          print(e)
+          aerror = True
+          error = "Problemas para conectar la tabla "+str(e)        
+       
+    if aerror == True:
+       res = make_response(jsonify( error),400)
+       return res; 
+
+
 @usersconfigbackend_api.route("/api/usersconfigbackend_updatecompany",methods=['POST','GET'])
 def usersconfigbackend_updatecompany():    
     aerror = False
@@ -103,11 +154,10 @@ def usersconfigbackend_updatecompany():
     
     if aerror == False:
        try:
-          print(row["id"]+" skksk")
           connectionUser = conectUserDatabase(row["parent"])
           mycursor = connectionUser.cursor(dictionary=True)
           sql = "update company set nombre=%s,direccion=%s,telefono=%s"
-          val = (row["nombre"],row["direccion"],row["telefono"])
+          val = (row["nombre"],row["direccion"],row["telefono"],row["pais"])
           mycursor.execute(sql,val)
           connectionUser.commit()
 
@@ -145,10 +195,15 @@ def usersconfigbackend_userdata():
           mycursor.execute(sqlCompany)
           miComp = mycursor.fetchall()
 
-          
+          sqlAllUsers = "select * from users"
+          mycursor.execute(sqlAllUsers)
+          misUsers = mycursor.fetchall()
+
+
           if len(miuser) != 0:
              
              salida["user"] = miuser
+             salida["usersList"] = misUsers
              salida["company"] = miComp
 
              res = make_response(jsonify(salida),200)
@@ -173,7 +228,17 @@ def usersconfigbackend_newuser():
     aerror = False
     salida = {}
     row = request.get_json()
-    
+
+    if "@" not in row["email"]:
+       aerror = True
+       aerror = "Email invalido"
+   
+
+    if len(row["password"]) < 5:
+       aerror = True
+       error = "Contraseña debe tener mas de 5 letras"
+
+
     
     if aerror == False:
        try:
@@ -206,3 +271,4 @@ def usersconfigbackend_newuser():
     if aerror == True:
        res = make_response(jsonify({"Error": error}),400)
        return res; 
+
