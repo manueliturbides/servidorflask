@@ -13,8 +13,8 @@ ingresosolicitudprestamo_api = Blueprint('ingresosolicitudprestamo_api',__name__
 
 app = Flask(__name__)
 
-app.config['MYSQL_USER'] = configuracionservidor.auser
-app.config['MYSQL_DATABASE'] = configuracionservidor.adatabase
+app.config['MYSQL_USER'] = configuracionservidor.puser
+app.config['MYSQL_DATABASE'] = configuracionservidor.pdatabase
 app.config['MYSQL_HOST'] = configuracionservidor.phost
 app.config['MYSQL_PASSWORD'] = configuracionservidor.ppassword
 
@@ -28,14 +28,15 @@ def ingresarsolicitudprestamo():
     aerror = False
     salida = {}
     row = request.get_json()
-   
     try:
        ###validar campos de entrada
 
        aerror = False
 
+       #row['user'] = ""
+
        if aerror == False:
-          if len(row['cedula']) == 0 or len(row['cedula'] != 11):
+          if len(row['cedula']) == 0 or len(row['cedula']) != 11:
              aerror = True
              error = "La cedula no puede estar en blanco o la longitud es incorrecta"
               
@@ -179,13 +180,7 @@ def ingresarsolicitudprestamo():
              aerror = True
              error = "La cedula del fiador no pueden estar en blanco "
        
-       ###crear tabla de amortizacion
-       if aerror == False:
-          if row['tiposolicitud'] == "Soluto":      
-             pass
-             #crear diccionario para tabla de amortizacion soluta
-             for i in range(1,int(row['plazo'])):
-                 pass 
+       
 
        if aerror == False:
           
@@ -193,18 +188,30 @@ def ingresarsolicitudprestamo():
           mycursor = conectar.cursor()
           sql = "insert into solicit(cedula,nombres,apellidos,provincia,direccion,\
           telefono,sector,nacionalidad,nombrepila,email,\
-          comentario,financiamiento) values(%s,%s,%s,%s)"
+          comentario,financiamiento,plazo,formapago,interes,\
+          mora,cedulafiador,nombrefiador,telefonofiador,direccionfiador,\
+          tipofinanciamiento,valorcuotas,deudatotal,edad,celular,\
+          sexo,ecivil,dependientes,user,fecha_crea,fecha_mod) values(%s,%s,%s,%s,%s,\
+          %s,%s,%s,%s,%s,\
+          %s,%s,%s,%s,%s,\
+          %s,%s,%s,%s,%s,\
+          %s,%s,%s,%s,%s,\
+          %s,%s,%s,%s,%s,%s)"
 
           val = (row['cedula'],row['nombres'],row['apellidos'],row['provincia'],row['direccion'],\
-                 row['telefono'],row['sector'],row['nacionalidad'],row['nombrepila'],row['email'],
-                 row['comentario'])
-          mycursor.execute(sql)
+                 row['telefono'],row['sector'],row['nacionalidad'],row['nombrepila'],row['email'],\
+                 row['comentario'],float(row['financiamiento']),int(row['plazo']),row['formapago'],row['interes'],\
+                 row['mora'],row['cedulafiador'],row['nombrefiador'],row['telefonofiador'],row['direccionfiador'],\
+                 row['tiposolicitud'],float(row['valorcuotas']),float(row['deudatotal']),row['edad'],row['celular'],\
+                 row['sexo'],row['ecivil'],row['dependientes'],row['user'],datetime.now().date(),datetime.now().date())
+          mycursor.execute(sql,val)
 
   
           conectar.commit()
           conectar.close() 
        
     except Exception as e:
+          print(e)
           aerror = True
           error = "Problemas para conectar la tabla "+str(e)        
        

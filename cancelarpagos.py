@@ -1,0 +1,147 @@
+from flask import Flask
+from flask_cors import CORS
+from flask import Blueprint
+from flask import jsonify
+from flask import request
+from flask import make_response
+from datetime import datetime
+from flask_mysql_connector import MySQL
+import configuracionservidor 
+from datetime import datetime,timedelta
+
+
+cancelarpagos_api = Blueprint('cancelarpagos_api',__name__)
+
+app = Flask(__name__)
+
+app.config['MYSQL_USER'] = configuracionservidor.puser
+app.config['MYSQL_DATABASE'] = configuracionservidor.pdatabase
+app.config['MYSQL_HOST'] = configuracionservidor.phost
+app.config['MYSQL_PASSWORD'] = configuracionservidor.ppassword
+
+mysql = MySQL(app)
+CORS(app)
+mysql = MySQL(app)
+
+@cancelarpagos_api.route("/api/cancelarpagos",methods=['POST','GET'])
+def consultarpagos():
+    
+    aerror = False
+    salida = {}
+    row = request.get_json()
+    print(row)
+    try:
+       ###validar campos de entrada
+
+       aerror = False
+
+       if aerror == False:
+          
+          conectar = mysql.connection
+          mycursor = conectar.cursor(dictionary=True)
+          sql = "select pagosres.noprest as Noprest, pagosres.norecibo as Norecibo,date_format(pagosres.fecha,'%d-%m-%Y') as Fecha,\
+          prestamo.nombres as Nombres,format((pagosres.vpagint+pagosres.vpagcap+vpagmora),2) as Cuota, format(pagosres.vpagmora,2) as Mora,\
+          pagosres.norecibo as id from pagosres \
+          inner join prestamo on pagosres.noprest = prestamo.noprest \
+          where pagosres.fecha between "+"'"+str(row['fechadesde'])+"' and"+"'"+str(row['fechahasta'])+"'"
+          
+          print(sql)
+          mycursor.execute(sql)
+          data = mycursor.fetchall()
+          
+          
+          conectar.close() 
+          print(data) 
+    except Exception as e:
+          print(e)
+          aerror = True
+          error = "Problemas para conectar la tabla "+str(e)        
+       
+    if aerror == True:
+       res = make_response(jsonify({"Error": error}),400)
+       return res; 
+    if aerror == False:
+       res = make_response(jsonify({"data":data}),200)
+       return res; 
+
+@cancelarpagos_api.route("/api/consultarpagosacancelar",methods=['POST','GET'])
+def consultarpagosacancelar():
+    
+    aerror = False
+    salida = {}
+    row = request.get_json()
+    print(row)
+    try:
+       ###validar campos de entrada
+
+       aerror = False
+
+       if aerror == False:
+          
+          conectar = mysql.connection
+          mycursor = conectar.cursor(dictionary=True)
+          sql = "select pagosres.noprest as Noprest, pagosres.norecibo as Norecibo,date_format(pagosres.fecha,'%d-%m-%Y') as Fecha,\
+          prestamo.nombres as Nombres,format((pagosres.vpagint+pagosres.vpagcap+pagosres.vpagmora),2) as Cuota, format(pagosres.vpagmora,2) as Mora,\
+          pagosres.norecibo as id from pagosres \
+          inner join prestamo on pagosres.noprest = prestamo.noprest \
+          where prestamo.noprest = "+"'"+row['noprest']+"'"+" and pagosres.fecha between "+"'"+str(row['fechadesde'])+"' and"+"'"+str(row['fechahasta'])+"' order by pagosres.norecibo desc"
+          
+          print(sql)
+          mycursor.execute(sql)
+          data = mycursor.fetchall()
+          
+          
+          
+          conectar.close() 
+          print(data) 
+    except Exception as e:
+          print(e)
+          aerror = True
+          error = "Problemas para conectar la tabla "+str(e)        
+       
+    if aerror == True:
+       res = make_response(jsonify({"Error": error}),400)
+       return res; 
+    if aerror == False:
+       res = make_response(jsonify({"data":data}),200)
+       return res; 
+
+
+@cancelarpagos_api.route("/api/cancelarpagopornumeroderecibo",methods=['POST','GET'])
+def cancelarpagopornumeroderecibo():
+    
+    aerror = False
+    salida = {}
+    row = request.get_json()
+    print(row)
+    try:
+       ###validar campos de entrada
+
+       aerror = False
+
+       if aerror == False:
+          
+          conectar = mysql.connection
+          mycursor = conectar.cursor(dictionary=True)
+          sql = "delete from pagosres where norecibo = "+"'"+str(row['norecibo'])+"'"
+          mycursor.execute(sql)
+          
+          sql = "delete from pagos where norecibo = "+"'"+str(row['norecibo'])+"'"
+          mycursor.execute(sql)
+          
+          
+          conectar.commit()
+          conectar.close() 
+          
+    except Exception as e:
+          print(e)
+          aerror = True
+          error = "Problemas para conectar la tabla "+str(e)        
+       
+    if aerror == True:
+       res = make_response(jsonify({"Error": error}),400)
+       return res; 
+    if aerror == False:
+       res = make_response(jsonify({"data":"Pago Eliminado Correctamente"}),200)
+       return res; 
+            

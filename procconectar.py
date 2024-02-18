@@ -1,4 +1,3 @@
-
 def conectUserDatabase(nombre):    
     import mysql.connector
     
@@ -14,17 +13,35 @@ def conectUserDatabase(nombre):
        sqlUsers = "CREATE TABLE IF NOT EXISTS Users (id varchar(255) NOT NULL PRIMARY KEY,parent varchar(255),nombre varchar(255),apellido varchar(255),email varchar(255),password varchar(255),permissions varchar(255));"
        mycursor.execute(sqlUsers)
        mycursor.execute(sqlCompany)
-
-       mycursor.execute("create table if not exists solicit(id MEDIUMINT NOT NULL AUTO_INCREMENT,nosolic int(4),noprest int(8),\
-       fecha date,apellidos varchar(45),nombres varchar(45),direccion varchar(100),urb varchar(45),telefono varchar(15),celular varchar(45),email varchar(45),\
-       apodo varchar(45),comentario varchar(1000),depend int(4),dirpadres varchar(100),edad int(4),cedula varchar(15),ecivil varchar(45),\
-       cantsol float,razon varchar(100),plazo int(3),fechaini date,empresa varchar(45),dirtrab varchar(100),teltrab varchar(100),\
-       tiempotrab int(4),fiador varchar(100),fiadordir varchar(100),urbfiad varchar(100),fiadortel varchar(15),edadfiad int(3),fiadorced varchar(15),\
-       chasis varchar(45),status char(1),sucursal varchar(15),user varchar(100),fecha_crea date, fecha_mod date, PRIMARY KEY(id))")
+     
+       mycursor.execute("create table if not exists solicit(id MEDIUMINT NOT NULL AUTO_INCREMENT,nosolic int(4),cedula varchar(15),\
+       nombres varchar(100),apellidos varchar(100),provincia varchar(45),direccion varchar(100),telefono varchar(45),sector varchar(45),nacionalidad varchar(45),nombrepila varchar(45),\
+       email varchar(45),comentario varchar(450),financiamiento float,plazo int,formapago varchar(45),interes float,mora float,\
+       cedulafiador varchar(15),nombrefiador varchar(100),telefonofiador varchar(15),tipofinanciamiento varchar(15),valorcuotas float,deudatotal float,aprobado varchar(1),\
+       aprobadopor varchar(25),edad varchar(10),sexo varchar(45),direccionfiador varchar(100),celular varchar(45),\
+       ecivil varchar(15),dependientes varchar(15),user varchar(100),fecha_crea date, fecha_mod date, PRIMARY KEY(id))")
  
-
+       mycursor.execute("create table if not exists amort(id mediumint not null auto_increment,noprest int,nosolic int,cedula varchar(15),nocuota int,\
+                        fecha date,cuota float,capital float,interes float,balance float, status varchar(1),vpagcap float,vpagint float,\
+                        descuento float,pagadodescuento varchar(1),pcuotas int,vapgmora float,user varchar(45),fecha_crea date,fecha_mod date,primary key(id))")
+ 
+       mycursor.execute("create table if not exists prestamo(noprest mediumint not null auto_increment,nosolic int,fecha date,periodos int,\
+                        cedula varchar(45),nombres varchar(45),apellidos varchar(45),solicitado float,plazo int,interes float,mora float,status varchar(1),vpagint float,vpagcap float,vpagmora float,pcuotas int,fcancel date,fultpago date,\
+                        norecibo int,montoult float,user varchar(45),fecha_crea date,fecha_mod date,PRIMARY KEY(noprest))")
+       
+       mycursor.execute("create table if not exists pagosres(norecibo MEDIUMINT NOT NULL AUTO_INCREMENT,noprest int,nosolic int,cedula varchar(15),\
+         nocuota int,cuota float,mora float,fecha date,vpagint float,vpagmora float,vpagcap float,descinte float,fecha1 date,\
+         descmora float,sucursal varchar(15),user varchar(100),fecha_crea date, fecha_mod date,timestamp datetime, \
+         tipodepago varchar(45),aprobacion varchar(45), numerotarjeta varchar(45),PRIMARY KEY(norecibo))")
+ 
+       mycursor.execute("create table if not exists pagos(norecibo MEDIUMINT NOT NULL AUTO_INCREMENT,noprest int,nosolic int,cedula varchar(15),\
+         nocuota int,cuota float,mora float,fecha date,vpagint float,vpagmora float,vpagcap float,descinte float,fecha1 date,\
+         descmora float,sucursal varchar(15),user varchar(100),fecha_crea date, \
+         balance float,fecha_mod date,timestamp datetime,PRIMARY KEY(norecibo))")
+       
        return(mydb)
-    except mysql.connector.Error as err:
-      return("Error")
+    except Exception as e:
+      print(e)
+      return(e)
 
 

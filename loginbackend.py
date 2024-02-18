@@ -26,6 +26,13 @@ CORS(app)
 
 mysqluser = MySQL(app)
 
+
+@loginbackend_api.route("/api/database",methods=['POST','GET'])
+def database():
+    connect = conectUserDatabase("manuel")
+
+    return({"ok": "ok"})
+
 @loginbackend_api.route("/api/configuredatabasegeneral",methods=['POST','GET'])
 def registerbackend_configuredatabasegeneral():
     
@@ -91,19 +98,19 @@ def registerbackend_validateemail():
        res = make_response(jsonify( error),400)
        return res; 
 
+
 @loginbackend_api.route("/api/registerbackend_registrar",methods=['POST','GET'])
 def registerbackend_registrar():
     
-    #connectionUser = conectUserDatabase("manuel")
     
-
     aerror = False
     salida = {}
     row = request.get_json()
-    
+          
     
     if aerror == False:
        try:
+    
           conectar = mysql.connection
           mycursor = conectar.cursor()
           sql = "insert into Users(id,parent,email,password) values(%s,%s,%s,%s)"
@@ -144,6 +151,7 @@ def loginbackend_login():
     salida = {}
     row = request.get_json()
     
+
     
     if aerror == False:
        try:
@@ -154,9 +162,9 @@ def loginbackend_login():
           miuser = mycursor.fetchall()
 
           if mycursor.rowcount != 0:
+             salida["miuser"] = miuser
              
-             
-             res = make_response(jsonify(miuser),200)
+             res = make_response(jsonify(salida),200)
              return res 
           else:
              aerror = True

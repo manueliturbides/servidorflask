@@ -11,6 +11,21 @@ from loginbackend import loginbackend_api
 from restaurarcancelarprestamobackend import restaurarcancelarprestamobackend_api
 from usersconfigbackend import usersconfigbackend_api
 from solicitudprestamo import ingresosolicitudprestamo_api
+from aprobacionprestamos import aprobacionprestamos_api
+from pagosprestamos import pagosprestamos_api
+from consultaprestamos import consultaprestamos_api
+from consultarpagos import consultarpagos_api
+from cancelarpagos import cancelarpagos_api
+from cancelarrestaurarprestamo import cancelarrestaurarprestamo_api
+from consultarsolicitud import consultasolicitud_api
+from descuentoprestamos import descuentoprestamos_api
+from interesescobradosperiodos import interesescobradosperiodos_api
+from balanceprestamoclientes import balanceprestamoscliente_api
+from balancecuotasantiguedad import balancecuotasantiguedad_api
+from historialdepagos import hitorialdepagos_api
+from historicodepagos import historicodepagos_api
+from auditoriaderecibos import auditoriaderecibos_api
+from cuadredecaja import cuadredecaja_api
 
 import configuracionservidor 
 
@@ -30,6 +45,21 @@ CORS(application)
 application.register_blueprint(loginbackend_api)
 application.register_blueprint(usersconfigbackend_api)
 application.register_blueprint(ingresosolicitudprestamo_api)
+application.register_blueprint(aprobacionprestamos_api)
+application.register_blueprint(pagosprestamos_api)
+application.register_blueprint(consultaprestamos_api)
+application.register_blueprint(consultarpagos_api)
+application.register_blueprint(cancelarpagos_api)
+application.register_blueprint(cancelarrestaurarprestamo_api)
+application.register_blueprint(consultasolicitud_api)
+application.register_blueprint(descuentoprestamos_api)
+application.register_blueprint(interesescobradosperiodos_api)
+application.register_blueprint(balanceprestamoscliente_api)
+application.register_blueprint(balancecuotasantiguedad_api)
+application.register_blueprint(hitorialdepagos_api)
+application.register_blueprint(historicodepagos_api)
+application.register_blueprint(auditoriaderecibos_api)
+application.register_blueprint(cuadredecaja_api)
 
 @application.route("/")
 def servirpaginaestatica():
@@ -37,7 +67,7 @@ def servirpaginaestatica():
 
 @application.errorhandler(404)
 def not_found(e):
-    return render_template('index.html')
+    return "render_template('index.html')"
 
 if __name__ == "__main__":
     application.debug = True
