@@ -22,7 +22,7 @@ def conectUserDatabase(nombre):
        mydb=mysql.connector.connect(host="127.0.0.1",user="root",password="00100267590",port = 3306,database=nombre)
        mycursor = mydb.cursor(dictionary=True)
  
-       mycursor.execute("Create table if not exists Company(nombre varchar(255),direccion varchar(255),logo BLOB,telefono varchar(255),pais varchar(255));")
+       mycursor.execute("Create table if not exists Company(nombre varchar(255),direccion varchar(255),logo MEDIUMBLOB,telefono varchar(255),pais varchar(255));")
        mycursor.execute("CREATE TABLE IF NOT EXISTS Users (id varchar(255) NOT NULL PRIMARY KEY,parent varchar(255),nombre varchar(255),apellido varchar(255),email varchar(255),password varchar(255),permissions varchar(255));")
        mycursor.execute("CREATE TABLE IF NOT EXISTS Facturas (id INT NOT NULL AUTO_INCREMENT primary key,plan varchar(255),total int,promocode varchar(255),suscriptionid varchar(255),fecha date);")
 

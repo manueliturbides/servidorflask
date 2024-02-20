@@ -439,19 +439,17 @@ def createsubscription():
     return jsonify(result["jsonResponse"]), result["httpStatusCode"]
 
 
-@billingbackend_api.route("/api/paypal/limitedeclientes",methods=['POST','GET'])
+@billingbackend_api.route("/api/limitedeclientes",methods=['POST','GET'])
 def limitedeclientes():
     
     aerror = False
     salida = {}
-    #row = request.get_json()
+    row = request.get_json()
     try:
-       ###validar campos de entrada
-
        aerror = False
-
+       
        if aerror == False:
-          conectar = conectUserDatabase('65d2522a74167213f57d5dad')
+          conectar = conectUserDatabase(row["parent"])
           mycursor = conectar.cursor(dictionary=True)
           sql = "select sum(deudatotal) as totalvalorprestamo,count(id) as cantidaddeprestamo from solicit where aprobado = 'S' group by aprobado"
           mycursor.execute(sql)

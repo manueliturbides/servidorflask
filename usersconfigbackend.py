@@ -1,7 +1,8 @@
-from flask import Flask
+from flask import Flask, send_file,url_for
 from flask_cors import CORS
 from flask import Blueprint
 from flask import jsonify
+import io
 from flask import request
 from flask import make_response
 from datetime import datetime
@@ -145,6 +146,50 @@ def usersconfigbackend_deleteuser():
        res = make_response(jsonify( error),400)
        return res; 
 
+@usersconfigbackend_api.route("/api/usersconfigbackend_updatecompanylogo",methods=['POST','GET'])
+def usersconfigbackend_updatecompanylogo():    
+    aerror = False
+    error = {}
+    imagefile = request.files['image']
+    bin_file = imagefile.read()
+    print(type(bin_file))
+    if aerror == False:
+       try:
+          connectionUser = conectUserDatabase(request.form["parent"])
+          mycursor = connectionUser.cursor(dictionary=True)
+          sql = "update company set logo=%s"
+          val = (bin_file,)
+          mycursor.execute(sql,val)
+          connectionUser.commit()
+          url = url_for("usersconfigbackend_api.logo", _id=request.form["parent"])
+          print(url)
+
+          res = make_response(jsonify({"succes":"sucess"}),200)
+          return res
+       
+       except Exception as e:
+          print(e)
+          aerror = True
+          error = "Problemas para conectar la tabla "+str(e)        
+       
+    if aerror == True:
+       res = make_response(jsonify( error),400)
+       return res; 
+
+@usersconfigbackend_api.route('/logo/<_id>')
+def logo(_id):
+   connectionUser = conectUserDatabase(_id)
+   mycursor = connectionUser.cursor()
+   
+   sqlCompany = "select logo from company"
+   mycursor.execute(sqlCompany)
+   miComp = mycursor.fetchall()
+   print(miComp[0][0])
+ 
+   response =  send_file(io.BytesIO(miComp[0][0]),mimetype="image/*")
+
+   return response
+
 
 @usersconfigbackend_api.route("/api/usersconfigbackend_updatecompany",methods=['POST','GET'])
 def usersconfigbackend_updatecompany():    
@@ -156,7 +201,7 @@ def usersconfigbackend_updatecompany():
        try:
           connectionUser = conectUserDatabase(row["parent"])
           mycursor = connectionUser.cursor(dictionary=True)
-          sql = "update company set nombre=%s,direccion=%s,telefono=%s"
+          sql = "update company set nombre=%s,direccion=%s,telefono=%s,pais=%s"
           val = (row["nombre"],row["direccion"],row["telefono"],row["pais"])
           mycursor.execute(sql,val)
           connectionUser.commit()
@@ -191,7 +236,7 @@ def usersconfigbackend_userdata():
           mycursor.execute(sqlUser)
           miuser = mycursor.fetchall()
          
-          sqlCompany = "select * from company"
+          sqlCompany = "select nombre,direccion,telefono,pais from company"
           mycursor.execute(sqlCompany)
           miComp = mycursor.fetchall()
 
@@ -214,6 +259,7 @@ def usersconfigbackend_userdata():
        
        
        except Exception as e:
+          print(e)
           aerror = True
           error = "Problemas para conectar la tabla "+str(e)        
        

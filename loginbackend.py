@@ -10,7 +10,8 @@ from flask_mysql_connector import MySQL
 import configuracionservidor 
 import calendar
 from procconectar import conectUserDatabase
-import mysql.connector as connector
+import smtplib
+from email.message import EmailMessage
 
 
 loginbackend_api = Blueprint('loginbackend_api',__name__)
@@ -36,11 +37,10 @@ def registerbackend_configuredatabasegeneral():
     
     
     if aerror == False:
-       try:
-          mydb = connector.connect(host="127.0.0.1",user="root",password="00100267590")
+       try:          
+          mydb = mysql.connector.connect(host="127.0.0.1",user="root",password="00100267590")
           mycursor = mydb.cursor()
-          mycursor.execute("create database if not exists general")
-
+          mycursor.execute("create database if not exists generales")
 
           conectar = mysql.connection
           mycursor = conectar.cursor(dictionary=True)
@@ -59,7 +59,6 @@ def registerbackend_configuredatabasegeneral():
           sql = "CREATE TABLE IF NOT EXISTS transacciones(fecha date,paypal varchar(255), id varchar(255), total varchar(255),realizada varchar(255))"
           mycursor.execute(sql)
           
-          
 
           conectar.close()
           res = make_response("Success",200)
@@ -71,6 +70,45 @@ def registerbackend_configuredatabasegeneral():
     if aerror == True:
        res = make_response(jsonify({"Error": "error"}),400)
        return res; 
+
+@loginbackend_api.route("/api/registerbackend_sendcode",methods=['POST','GET'])
+def registerbackend_sendcode():
+    
+    row = request.get_json()
+        
+    email = row["email"]
+    code = row["code"]
+   
+
+    msg = EmailMessage()
+    msg['Subject'] = 'PrestaQuiK Contacto'
+    msg['From'] = "support@prosecomsrl.com"
+    msg['To'] = email
+    msg.set_content('''
+                    <!DOCTYPE html>
+                      <html>
+                        <body style="background-color: white; ">
+                            <p>Gracias por registrarte en PrestaQuiK</p> 
+                            <p>Su código de registro es: <strong>'''+str(code)+''''</strong> </p>
+                            <br></br>
+                            <p>Administración PrestaQuiK</p>
+                    
+
+                       </body>
+                      </html>''', subtype='html')
+
+    try:
+      server = smtplib.SMTP_SSL('smtp.mail.us-east-1.awsapps.com', 465)
+      server.ehlo()
+      server.login('support@prosecomsrl.com', 'mr@00100267590')
+      text = msg.as_string()
+      server.sendmail("support@prosecomsrl.com", email, text)
+      print('Email sent to %s' "email_recipient")
+    except Exception as e:
+      print(e)
+      print("SMTP server connection error")
+
+    return str(code)
 
 @loginbackend_api.route("/api/registerbackend_validateemail",methods=['POST','GET'])
 def registerbackend_validateemail():
