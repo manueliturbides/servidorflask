@@ -8,6 +8,7 @@ from datetime import datetime
 from flask_mysql_connector import MySQL
 import configuracionservidor 
 from datetime import datetime,timedelta
+from procconectar import conectUserDatabase
 
 hitorialdepagos_api = Blueprint('historialdepagos_api',__name__)
 
@@ -36,7 +37,7 @@ def historialdepagos():
 
        if aerror == False:
           
-          conectar = mysql.connection
+          conectar = conectUserDatabase(row['parent'])
           mycursor = conectar.cursor(dictionary=True)
           sql = "select distinct format(solicit.deudatotal,2) as Deudatotal, concat(solicit.nombres,' ',solicit.apellidos) as Nombres,prestamo.noprest as Nprest, \
           format(prestamo.vpagcap,2) as Capitalpagado, format(prestamo.vpagint,2) as Interespagado, format((solicit.deudatotal - (prestamo.vpagint+prestamo.vpagcap)),2) as Balance, \

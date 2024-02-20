@@ -8,6 +8,7 @@ from datetime import datetime
 from flask_mysql_connector import MySQL
 import configuracionservidor 
 from datetime import datetime,timedelta
+from procconectar import conectUserDatabase
 
 
 interesescobradosperiodos_api = Blueprint('interesescobradosperiodos_api',__name__)
@@ -37,7 +38,7 @@ def interesescobradosperiodos():
 
        if aerror == False:
           
-          conectar = mysql.connection
+          conectar = conectUserDatabase(row['parent'])
           mycursor = conectar.cursor(dictionary=True)
           sql = "select pagosres.norecibo as Nrecibo,pagosres.noprest as Noprest,date_format(pagosres.fecha,'%d-%m-%Y') as Fecha,\
           format(pagosres.vpagint,2) as Valor, concat(nombres,' ',apellidos) as Nombres,pagosres.norecibo as id from pagosres \

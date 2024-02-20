@@ -8,7 +8,7 @@ from datetime import datetime
 from flask_mysql_connector import MySQL
 import configuracionservidor 
 from datetime import datetime,timedelta
-
+from procconectar import conectUserDatabase
 
 descuentoprestamos_api = Blueprint('descuentoprestamos_api',__name__)
 
@@ -37,7 +37,7 @@ def consultadescuentoprestamos():
 
        if aerror == False:
           
-          conectar = mysql.connection
+          conectar = conectUserDatabase(row['parent'])
           mycursor = conectar.cursor(dictionary=True)
           sql = "select nocuota as Nocuota,date_format(fecha,'%d-%m-%Y') as Fecha,format(cuota,2) as Valor,format((interes-(vpagint+ifnull(descuento,0))),2) as Interespend,ifnull(descuento,0) as Descuento,Pagadodescuento,id from amort \
           where status <> 'P' and noprest = "+"'"+str(row['noprest'])+"'"
@@ -72,7 +72,7 @@ def procesardescuento():
 
        if aerror == False:
           
-          conectar = mysql.connection
+          conectar = conectUserDatabase(row['parent'])
           mycursor = conectar.cursor(dictionary=True)
           sql = "select nocuota as Nocuota,format((interes-vpagint),2) as descuento from amort \
           where status <> 'P' and noprest = "+"'"+str(row['noprest'])+"' and nocuota \
@@ -111,7 +111,7 @@ def guardardescuento():
 
        if aerror == False:
           
-          conectar = mysql.connection
+          conectar = conectUserDatabase(row['parent'])
           mycursor = conectar.cursor(dictionary=True)
           
           for x in row['dataresultados']:
@@ -148,7 +148,7 @@ def limpiardescuento():
 
        if aerror == False:
           
-          conectar = mysql.connection
+          conectar = conectUserDatabase(row['parent'])
           mycursor = conectar.cursor(dictionary=True)
           
           for x in row['dataresultados']:

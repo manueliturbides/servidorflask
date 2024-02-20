@@ -6,7 +6,8 @@ from flask import request
 from flask import make_response
 from datetime import datetime
 from flask_mysql_connector import MySQL
-import configuracionservidor 
+import configuracionservidor
+from procconectar import conectUserDatabase 
 
 
 pagosprestamos_api = Blueprint('pagosprestamos_api',__name__)
@@ -37,7 +38,7 @@ def recuperartablaamortizacion():
 
        if aerror == False:
           
-          conectar = mysql.connection
+          conectar = conectUserDatabase(row['parent'])
           mycursor = conectar.cursor(dictionary=True)
           sql = "select amort.nocuota as Cuota,date_format(amort.fecha,'%d-%m-%Y') as Fecha,concat(prestamo.nombres,' ',prestamo.apellidos) as Nombres,\
               format(amort.capital+amort.interes-amort.vpagcap-amort.vpagint,2) as Valor, \
@@ -89,7 +90,7 @@ def recuperarprestamosactivos():
     
     aerror = False
     salida = {}
-    #row = request.get_json()
+    row = request.get_json()
     
     try:
        ###validar campos de entrada
@@ -98,7 +99,7 @@ def recuperarprestamosactivos():
 
        if aerror == False:
           
-          conectar = mysql.connection
+          conectar = conectUserDatabase(row['parent'])
           mycursor = conectar.cursor(dictionary=True)
           sql = "select concat(prestamo.noprest,'/',prestamo.nombres,' ',prestamo.apellidos,'/',solicit.cedula,'/',solicit.id) as label \
           from prestamo \
@@ -140,10 +141,12 @@ def guardardatospagos():
        tvcapitalpagado = 0
        tmorapagado = 0
        noprest = 0  
+       
+       conectar = conectUserDatabase(row['parent'])
+          
        for x in row['datospago']:
           
           noprest = x['Snoprest']
-          conectar = mysql.connection
           mycursor = conectar.cursor()
       
           if (float(x['Pagado']) <= float(x['Sinteres'])):
@@ -167,8 +170,9 @@ def guardardatospagos():
           " and nocuota = "+"'"+str(x['Cuota'])+"'"
           mycursor.execute(sql)
 
+          print(vinterespagado)
           sql = "update prestamo set vpagcap = vpagcap + "+"'"+str(vcapitalpagado)+"',"+\
-          "vpagint = vpagint + "+"'"+str(vinterespagado)+"',"+\
+          "vpagint = vpagint + "+"'"+str(tvinterespagado)+"',"+\
           "vpagmora = vpagmora + "+"'"+str(x['Mora'])+"',"+\
           " status = if(prestamo.solicitado-prestamo.vpagcap = 0,'P','A'), "+\
           " fultpago = "+"'"+str(datetime.now().date())+"',"+\
@@ -243,7 +247,7 @@ def reimprimirrecibodepago():
        aerror = False
       
        
-       conectar = mysql.connection
+       conectar = conectUserDatabase(row['parent'])
        mycursor = conectar.cursor(dictionary=True)
        sql = "select cast(pagos.noprest as char) as Noprest,date_format(pagos.fecha,'%d-%m-%Y') as Fecha,pagos.norecibo,concat(prestamo.nombres,' ',prestamo.apellidos) as Nombres,prestamo.cedula,\
        pagos.cuota as Cuota,(pagos.vpagint+pagos.vpagcap) as Pagado, pagos.vpagmora as Mora, balance as Balance,prestamo.cedula as Cedula from pagos \

@@ -8,6 +8,7 @@ from datetime import datetime
 from flask_mysql_connector import MySQL
 import configuracionservidor 
 from datetime import datetime,timedelta
+from procconectar import conectUserDatabase
 
 historicodepagos_api = Blueprint('historicodepagos_api',__name__)
 
@@ -36,7 +37,7 @@ def historicodepagos():
 
        if aerror == False:
           
-          conectar = mysql.connection
+          conectar = conectUserDatabase(row['parent'])
           mycursor = conectar.cursor(dictionary=True)
           sql = "select norecibo as Nrecibo, noprest as Nprest,date_format(fecha,'%d-%m-%Y') as Fecha,format(sum((vpagint+vpagcap)),2) as Cuota, format(sum(vpagmora),2) as Mora, \
           format(sum(descinte),2) as Descuento,norecibo as id from pagos where cedula = "+"'"+row['cedula']+"' and noprest = "+"'"+row['noprest']+"'"+\

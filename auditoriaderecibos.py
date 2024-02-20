@@ -8,6 +8,7 @@ from datetime import datetime
 from flask_mysql_connector import MySQL
 import configuracionservidor 
 from datetime import datetime,timedelta
+from procconectar import conectUserDatabase
 
 auditoriaderecibos_api = Blueprint('auditoriaderecibos_api',__name__)
 
@@ -36,7 +37,7 @@ def auditoriaderecibos():
 
        if aerror == False:
           
-          conectar = mysql.connection
+          conectar = conectUserDatabase(row['parent'])
           mycursor = conectar.cursor(dictionary=True)
           sql = "select pagos.norecibo as Nrecibo, pagos.noprest as Nprest,date_format(pagos.fecha,'%d-%m-%Y') as Fecha,format(sum((pagos.vpagint+pagos.vpagcap)),2) as Cuota, format(sum(pagos.vpagmora),2) as Mora, \
           concat(prestamo.nombres,' ',prestamo.apellidos) as Nombres,format(sum(pagos.descinte),2) as Descuento,pagos.norecibo as id from pagos inner join prestamo on prestamo.noprest = pagos.noprest \

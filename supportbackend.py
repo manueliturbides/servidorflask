@@ -22,10 +22,10 @@ supportbackend_api = Blueprint('supportbackend_api',__name__)
 
 app = Flask(__name__)
 
-app.config['MYSQL_USER'] = configuracionservidor.user
-app.config['MYSQL_DATABASE'] = configuracionservidor.database
-app.config['MYSQL_HOST'] = configuracionservidor.host
-app.config['MYSQL_PASSWORD'] = configuracionservidor.password
+app.config['MYSQL_USER'] = configuracionservidor.puser
+app.config['MYSQL_DATABASE'] = configuracionservidor.pdatabase
+app.config['MYSQL_HOST'] = configuracionservidor.phost
+app.config['MYSQL_PASSWORD'] = configuracionservidor.ppassword
 
 PAYPAL_CLIENT_ID = "Ac7Xe72157GerO-EfF2GpQuklSR2aQLIU66y3debvQZQMXXAMaHu69VFMwgn_a6db4zd1ud8-lSjnjc1"
 PAYPAL_CLIENT_SECRET = "EFpvcnm5Z6-9CDXBNJ9d9AwGqiYStObWrmD2JVLMy9JDP86rROjqhtbtWXCE4POdCOIgKu4Kp9jHfd_C"

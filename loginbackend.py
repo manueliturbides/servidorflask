@@ -10,16 +10,17 @@ from flask_mysql_connector import MySQL
 import configuracionservidor 
 import calendar
 from procconectar import conectUserDatabase
+import mysql.connector as connector
 
 
 loginbackend_api = Blueprint('loginbackend_api',__name__)
 
 app = Flask(__name__)
 
-app.config['MYSQL_USER'] = configuracionservidor.user
-app.config['MYSQL_DATABASE'] = configuracionservidor.database
-app.config['MYSQL_HOST'] = configuracionservidor.host
-app.config['MYSQL_PASSWORD'] = configuracionservidor.password
+app.config['MYSQL_USER'] = configuracionservidor.puser
+app.config['MYSQL_DATABASE'] = configuracionservidor.pdatabase
+app.config['MYSQL_HOST'] = configuracionservidor.phost
+app.config['MYSQL_PASSWORD'] = configuracionservidor.ppassword
 
 mysql = MySQL(app)
 
@@ -36,6 +37,11 @@ def registerbackend_configuredatabasegeneral():
     
     if aerror == False:
        try:
+          mydb = connector.connect(host="127.0.0.1",user="root",password="00100267590")
+          mycursor = mydb.cursor()
+          mycursor.execute("create database if not exists general")
+
+
           conectar = mysql.connection
           mycursor = conectar.cursor(dictionary=True)
           sql = "CREATE TABLE IF NOT EXISTS Users (id varchar(255),parent varchar(255),email varchar(255),password varchar(255));"
@@ -52,6 +58,7 @@ def registerbackend_configuredatabasegeneral():
 
           sql = "CREATE TABLE IF NOT EXISTS transacciones(fecha date,paypal varchar(255), id varchar(255), total varchar(255),realizada varchar(255))"
           mycursor.execute(sql)
+          
           
 
           conectar.close()

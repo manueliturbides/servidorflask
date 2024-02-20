@@ -8,7 +8,7 @@ from datetime import datetime
 from flask_mysql_connector import MySQL
 import configuracionservidor 
 from datetime import datetime,timedelta
-
+from procconectar import conectUserDatabase
 
 balanceprestamoscliente_api = Blueprint('balanceprestamoscliente_api',__name__)
 
@@ -37,7 +37,7 @@ def balanceprestamoscliente():
 
        if aerror == False:
           
-          conectar = mysql.connection
+          conectar = conectUserDatabase(row['parent'])
           mycursor = conectar.cursor(dictionary=True)
           sql = "select prestamo.noprest as Nprest, concat(prestamo.nombres,' ',prestamo.apellidos) as Nombres,\
           format(solicit.financiamiento,2) as Solicitado,format((solicit.deudatotal-solicit.financiamiento),2) as InteresxCob, format(prestamo.vpagint,2) as VpagInteres, \

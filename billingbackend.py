@@ -22,10 +22,10 @@ billingbackend_api = Blueprint('billinggbackend_api',__name__)
 
 app = Flask(__name__)
 
-app.config['MYSQL_USER'] = configuracionservidor.user
-app.config['MYSQL_DATABASE'] = configuracionservidor.database
-app.config['MYSQL_HOST'] = configuracionservidor.host
-app.config['MYSQL_PASSWORD'] = configuracionservidor.password
+app.config['MYSQL_USER'] = configuracionservidor.puser
+app.config['MYSQL_DATABASE'] = configuracionservidor.pdatabase
+app.config['MYSQL_HOST'] = configuracionservidor.phost
+app.config['MYSQL_PASSWORD'] = configuracionservidor.ppassword
 
 PAYPAL_CLIENT_ID = "Ac7Xe72157GerO-EfF2GpQuklSR2aQLIU66y3debvQZQMXXAMaHu69VFMwgn_a6db4zd1ud8-lSjnjc1"
 PAYPAL_CLIENT_SECRET = "EFpvcnm5Z6-9CDXBNJ9d9AwGqiYStObWrmD2JVLMy9JDP86rROjqhtbtWXCE4POdCOIgKu4Kp9jHfd_C"
@@ -437,3 +437,38 @@ def createsubscription():
     response = requests.post(url, json=payload, headers=headers)
     result = handle_response(response=response)
     return jsonify(result["jsonResponse"]), result["httpStatusCode"]
+
+
+@billingbackend_api.route("/api/paypal/limitedeclientes",methods=['POST','GET'])
+def limitedeclientes():
+    
+    aerror = False
+    salida = {}
+    #row = request.get_json()
+    try:
+       ###validar campos de entrada
+
+       aerror = False
+
+       if aerror == False:
+          conectar = conectUserDatabase('65d2522a74167213f57d5dad')
+          mycursor = conectar.cursor(dictionary=True)
+          sql = "select sum(deudatotal) as totalvalorprestamo,count(id) as cantidaddeprestamo from solicit where aprobado = 'S' group by aprobado"
+          mycursor.execute(sql)
+          data = mycursor.fetchall()
+          conectar.close()
+          print(sql)
+          print(data) 
+    except Exception as e:
+          print(e)
+          aerror = True
+          error = "Problemas para conectar la tabla "+str(e)        
+       
+    if aerror == True:
+       res = make_response(jsonify({"Error": error}),400)
+       return res; 
+    if aerror == False:
+       return jsonify({'data':data})
+       #res = make_response(jsonify({"data":data}),200)
+       #return res; 
+      

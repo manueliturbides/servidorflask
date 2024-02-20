@@ -7,6 +7,7 @@ from flask import make_response
 from datetime import datetime
 from flask_mysql_connector import MySQL
 import configuracionservidor 
+from procconectar import conectUserDatabase
 
 
 ingresosolicitudprestamo_api = Blueprint('ingresosolicitudprestamo_api',__name__)
@@ -183,27 +184,26 @@ def ingresarsolicitudprestamo():
        
 
        if aerror == False:
-          
-          conectar = mysql.connection
+          conectar = conectUserDatabase(row["parent"])
           mycursor = conectar.cursor()
           sql = "insert into solicit(cedula,nombres,apellidos,provincia,direccion,\
           telefono,sector,nacionalidad,nombrepila,email,\
           comentario,financiamiento,plazo,formapago,interes,\
           mora,cedulafiador,nombrefiador,telefonofiador,direccionfiador,\
           tipofinanciamiento,valorcuotas,deudatotal,edad,celular,\
-          sexo,ecivil,dependientes,user,fecha_crea,fecha_mod) values(%s,%s,%s,%s,%s,\
+          sexo,ecivil,dependientes,user,fecha_crea,fecha_mod,aprobado) values(%s,%s,%s,%s,%s,\
           %s,%s,%s,%s,%s,\
           %s,%s,%s,%s,%s,\
           %s,%s,%s,%s,%s,\
           %s,%s,%s,%s,%s,\
-          %s,%s,%s,%s,%s,%s)"
+          %s,%s,%s,%s,%s,%s,%s)"
 
           val = (row['cedula'],row['nombres'],row['apellidos'],row['provincia'],row['direccion'],\
                  row['telefono'],row['sector'],row['nacionalidad'],row['nombrepila'],row['email'],\
                  row['comentario'],float(row['financiamiento']),int(row['plazo']),row['formapago'],row['interes'],\
                  row['mora'],row['cedulafiador'],row['nombrefiador'],row['telefonofiador'],row['direccionfiador'],\
                  row['tiposolicitud'],float(row['valorcuotas']),float(row['deudatotal']),row['edad'],row['celular'],\
-                 row['sexo'],row['ecivil'],row['dependientes'],row['user'],datetime.now().date(),datetime.now().date())
+                 row['sexo'],row['ecivil'],row['dependientes'],row['user'],datetime.now().date(),datetime.now().date(),"N")
           mycursor.execute(sql,val)
 
   

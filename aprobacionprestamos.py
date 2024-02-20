@@ -8,7 +8,7 @@ from datetime import datetime
 from flask_mysql_connector import MySQL
 import configuracionservidor 
 from datetime import datetime,timedelta
-
+from procconectar import conectUserDatabase
 
 aprobacionprestamos_api = Blueprint('aprobacionprestamos_api',__name__)
 
@@ -28,7 +28,7 @@ def buscasaprobacionprestamos():
     
     aerror = False
     salida = {}
-    #row = request.get_json()
+    row = request.get_json()
     try:
        ###validar campos de entrada
 
@@ -36,7 +36,7 @@ def buscasaprobacionprestamos():
 
        if aerror == False:
           
-          conectar = mysql.connection
+          conectar = conectUserDatabase(row['parent'])
           mycursor = conectar.cursor(dictionary=True)
           sql = "select id as Num,'2023-10-31' as Fecha,concat(nombres,' ',apellidos) as Nombres,format(financiamiento,2) as Solicitado,format(valorcuotas,2) as Cuotas,\
           format(deudatotal,2) as DeudaTotal,tipofinanciamiento,fecha_crea,plazo,\
@@ -71,7 +71,7 @@ def aprobacionprestamos():
 
        if aerror == False:
           
-          conectar = mysql.connection
+          conectar = conectUserDatabase(row['parent'])
           mycursor = conectar.cursor(dictionary=True)
           sql = "update solicit set aprobado = 'S', user = "+"'"+row['user']+"'"+", fecha_mod = "+"'"+str(datetime.now().date())+"'"+\
           " where id = "+"'"+str(row['id'])+"'"
@@ -332,7 +332,7 @@ def buscarsolicitud():
 
        if aerror == False:
           
-          conectar = mysql.connection
+          conectar = conectUserDatabase(row['parent'])
           mycursor = conectar.cursor(dictionary=True)
           sql = "select id,nombres,apellidos,cedula,direccion,provincia,telefono,edad,celular,sexo,\
           ecivil,dependientes,sector,nacionalidad,nombrepila,email,comentario,format(financiamiento,2) as financiamiento,plazo,\
@@ -417,7 +417,7 @@ def modificardatossolicitud():
    
        if aerror == False:
           
-          conectar = mysql.connection
+          conectar = conectUserDatabase(row['parent'])
           mycursor = conectar.cursor(dictionary=True)
           sql = "update solicit set nombres = %s,apellidos = %s,direccion=%s,provincia=%s,telefono=%s,celular=%s,sector=%s,\
           cedulafiador=%s,nombrefiador=%s,telefonofiador=%s,mora=%s where id = "+"'"+str(row['id'])+"'"

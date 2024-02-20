@@ -8,6 +8,7 @@ from datetime import datetime
 from flask_mysql_connector import MySQL
 import configuracionservidor 
 from datetime import datetime,timedelta
+from procconectar import conectServerDatabase
 
 
 consultasolicitud_api = Blueprint('consultasolicitud_api',__name__)
@@ -37,7 +38,7 @@ def consultarsolicitud():
 
        if aerror == False:
           
-          conectar = mysql.connection
+          conectar = conectUserDatabase(row['parent'])
           mycursor = conectar.cursor(dictionary=True)
           sql = "select solicit.id as Nosolic,date_format(solicit.fecha_crea,'%d-%m-%Y') as Fecha,concat(solicit.nombres,' ',solicit.apellidos) as Nombres,\
           format(solicit.deudatotal,2) as Valor,\

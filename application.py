@@ -3,6 +3,7 @@ from flask_cors import CORS
 from flask_mysql_connector import MySQL
 from flask import jsonify
 from flask import request
+from flask import send_file
 import smtplib
 import random
 from email.message import EmailMessage
@@ -41,10 +42,10 @@ import configuracionservidor
 
 application = Flask(__name__,static_url_path='',static_folder='build',template_folder='build')
 
-application.config['MYSQL_USER'] = configuracionservidor.user
-application.config['MYSQL_DATABASE'] = configuracionservidor.database
-application.config['MYSQL_HOST'] = configuracionservidor.host
-application.config['MYSQL_PASSWORD'] = configuracionservidor.password
+application.config['MYSQL_USER'] = configuracionservidor.puser
+application.config['MYSQL_DATABASE'] = configuracionservidor.pdatabase
+application.config['MYSQL_HOST'] = configuracionservidor.phost
+application.config['MYSQL_PASSWORD'] = configuracionservidor.ppassword
 
 pruebabackend_api = Blueprint('pruebabackend_api',__name__)
 
@@ -53,7 +54,6 @@ mysql = MySQL(application)
 CORS(application)
 
 application.register_blueprint(loginbackend_api)
-application.register_blueprint(usersconfigbackend_api)
 application.register_blueprint(ingresosolicitudprestamo_api)
 application.register_blueprint(aprobacionprestamos_api)
 application.register_blueprint(pagosprestamos_api)
@@ -158,6 +158,10 @@ def contactprosecom():
       print("SMTP server connection error")
     return str(codigo)
 
+@application.route('/contrato',methods=['POST','GET'])
+def contrato():
+	  return send_file('Plantillas/contratofinal1.docx')
+    
 if __name__ == "__main__":
     application.debug = True
     application.run()

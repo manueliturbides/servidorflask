@@ -8,6 +8,7 @@ from datetime import datetime
 from flask_mysql_connector import MySQL
 import configuracionservidor 
 from datetime import datetime,timedelta
+from procconectar import conectUserDatabase
 
 balancecuotasantiguedad_api = Blueprint('balancecuotasantiguedad_api',__name__)
 
@@ -36,7 +37,7 @@ def balancecuotasantiguedad():
 
        if aerror == False:
           
-          conectar = mysql.connection
+          conectar = conectUserDatabase(row['parent'])
           mycursor = conectar.cursor(dictionary=True)
           sql = "select amort.noprest as Nprest, concat(solicit.nombres,' ',solicit.apellidos) as Nombres,format(sum((capital-vpagcap)),2) as Capital, \
           format(sum((amort.interes - amort.vpagint)),2) as Interes, count(amort.noprest) as Cuotas, amort.noprest as id from amort  \

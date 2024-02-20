@@ -7,6 +7,7 @@ from flask import make_response
 from datetime import datetime
 from flask_mysql_connector import MySQL
 import configuracionservidor 
+from procconectar import conectUserDatabase
 
 
 restaurarcancelarprestamobackend_api = Blueprint('restaurarcancelarprestamobackend_api',__name__)
@@ -32,7 +33,7 @@ def cancelarprestamo():
     row = request.get_json()
    
     try:
-       conectar = mysql.connection
+       conectar = conectUserDatabase(row['parent'])
        mycursor = conectar.cursor()
        sql = "update prestamo set status = 'C',fcancel = "+"'"+str(datetime.now().date())+"'"+" where noprest = "+str(row['id'])
        mycursor.execute(sql)
@@ -93,7 +94,7 @@ def restaurarprestamo():
     row = request.get_json()
 
     try:
-       conectar = mysql.connection
+       conectar = conectUserDatabase(row['parent'])
        mycursor = conectar.cursor(dictionary=True)
        sql = "select prestamo.noprest,prestamo.chasis as prestchasis, producto.chasis as prodchasis from prestamo "+\
        " inner join producto on prestamo.noprest = producto.noprest "

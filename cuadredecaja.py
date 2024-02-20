@@ -8,6 +8,7 @@ from datetime import datetime
 from flask_mysql_connector import MySQL
 import configuracionservidor 
 from datetime import datetime,timedelta
+from procconectar import conectUserDatabase
 
 cuadredecaja_api = Blueprint('cuadredecaja_api',__name__)
 
@@ -36,7 +37,7 @@ def cuadredecaja():
 
        if aerror == False:
           
-          conectar = mysql.connection
+          conectar = conectUserDatabase(row['parent'])
           mycursor = conectar.cursor(dictionary=True)
           sql = "select pagos.norecibo as Nrecibo, pagos.noprest as Noprest,date_format(pagos.fecha,'%d-%m-%Y') as Fecha,format((pagos.vpagint+pagos.vpagcap),2) as Valor, format(pagos.vpagmora,2) as Mora, \
           format(pagos.descinte,2) as Descuento,format(pagos.mora,2) as Mora, format((pagos.vpagcap+pagos.vpagint+pagos.vpagmora),2) as Total,\

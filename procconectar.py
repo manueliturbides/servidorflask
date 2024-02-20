@@ -37,7 +37,7 @@ def conectUserDatabase(nombre):
  
        mycursor.execute("create table if not exists amort(id mediumint not null auto_increment,noprest int,nosolic int,cedula varchar(15),nocuota int,\
                         fecha date,cuota float,capital float,interes float,balance float, status varchar(1),vpagcap float,vpagint float,\
-                        descuento float,pagadodescuento varchar(1),pcuotas int,vapgmora float,user varchar(45),fecha_crea date,fecha_mod date,primary key(id))")
+                        descuento float,pagadodescuento varchar(1),pcuotas int,vpagmora float,user varchar(45),fecha_crea date,fecha_mod date,primary key(id))")
  
        mycursor.execute("create table if not exists prestamo(noprest mediumint not null auto_increment,nosolic int,fecha date,periodos int,\
                         cedula varchar(45),nombres varchar(45),apellidos varchar(45),solicitado float,plazo int,interes float,mora float,status varchar(1),vpagint float,vpagcap float,vpagmora float,pcuotas int,fcancel date,fultpago date,\

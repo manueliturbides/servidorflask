@@ -8,6 +8,7 @@ from datetime import datetime
 from flask_mysql_connector import MySQL
 import configuracionservidor 
 from datetime import datetime,timedelta
+from procconectar import conectUserDatabase
 
 
 cancelarrestaurarprestamo_api = Blueprint('cancelarrestaurarprestamo_api',__name__)
@@ -37,7 +38,7 @@ def consultarprestamos():
 
        if aerror == False:
           
-          conectar = mysql.connection
+          conectar = conectUserDatabase(row['parent'])
           mycursor = conectar.cursor(dictionary=True)
           sql = "select prestamo.noprest as Noprest,date_format(prestamo.fecha,'%d-%m-%Y') as Fecha,concat(prestamo.nombres,' ',prestamo.apellidos) as Nombres,\
           (solicit.deudatotal - (prestamo.vpagcap+prestamo.vpagint)) as Valor,prestamo.status as Status from prestamo \
@@ -78,7 +79,7 @@ def consultarrestaurarprestamos():
 
        if aerror == False:
           
-          conectar = mysql.connection
+          conectar = conectUserDatabase(row['parent'])
           mycursor = conectar.cursor(dictionary=True)
           if row['status'] == "A":
              sql = "update prestamo set status = 'C' where noprest = "+"'"+str(row['noprest'])+"'"
@@ -120,7 +121,7 @@ def recuperartodosprestamos():
 
        if aerror == False:
           
-          conectar = mysql.connection
+          conectar = conectUserDatabase(row['parent'])
           mycursor = conectar.cursor(dictionary=True)
           sql = "select concat(prestamo.noprest,'/',prestamo.nombres,' ',prestamo.apellidos,'/',solicit.cedula,'/',solicit.id) as label \
           from prestamo \

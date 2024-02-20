@@ -15,10 +15,10 @@ usersconfigbackend_api = Blueprint('usersconfigbackend_api',__name__)
 
 app = Flask(__name__)
 
-app.config['MYSQL_USER'] = configuracionservidor.user
-app.config['MYSQL_DATABASE'] = configuracionservidor.database
-app.config['MYSQL_HOST'] = configuracionservidor.host
-app.config['MYSQL_PASSWORD'] = configuracionservidor.password
+app.config['MYSQL_USER'] = configuracionservidor.puser
+app.config['MYSQL_DATABASE'] = configuracionservidor.pdatabase
+app.config['MYSQL_HOST'] = configuracionservidor.phost
+app.config['MYSQL_PASSWORD'] = configuracionservidor.ppassword
 
 
 CORS(app)
