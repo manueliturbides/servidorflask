@@ -1,3 +1,4 @@
+import pandas as pd
 from flask import Flask
 from flask_cors import CORS
 from flask import Blueprint
@@ -180,7 +181,7 @@ def billingbackend_nuevafactura():
           mycursor = connectionUser.cursor(dictionary=True)
           sql = "insert into facturas(plan,total,promocode,suscriptionid,fecha) values(%s,%s,%s,%s,%s)"
           date = datetime.today()
-          val = (row["plan"],row["total"],row["promcode"],row["suscriptionid"],date)
+          val = (str(row["plan"]),row["total"],row["promcode"],row["suscriptionid"],date)
           mycursor.execute(sql,val)
           connectionUser.commit()
 
@@ -439,6 +440,17 @@ def createsubscription():
     return jsonify(result["jsonResponse"]), result["httpStatusCode"]
 
 
+@billingbackend_api.route("/api/getcities",methods=['POST','GET'])
+def getcities():
+    row = request.get_json()
+    country = row["country"]
+    df = pd.read_csv("worldcities.csv")
+    
+    matching_cities = df[df['country'].str.lower() == country.lower()]['city_ascii'].tolist()
+   
+    return jsonify({'data':matching_cities})
+ 
+ 
 @billingbackend_api.route("/api/limitedeclientes",methods=['POST','GET'])
 def limitedeclientes():
     

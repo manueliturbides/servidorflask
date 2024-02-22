@@ -244,12 +244,17 @@ def usersconfigbackend_userdata():
           mycursor.execute(sqlAllUsers)
           misUsers = mycursor.fetchall()
 
+          sql = "select sum(deudatotal) as totalvalorprestamo,count(id) as cantidaddeprestamo from solicit where aprobado = 'S' group by aprobado"
+          mycursor.execute(sql)
+          data = mycursor.fetchall()
+
 
           if len(miuser) != 0:
              
              salida["user"] = miuser
              salida["usersList"] = misUsers
              salida["company"] = miComp
+             salida["generaldata"] = data
 
              res = make_response(jsonify(salida),200)
              return res 

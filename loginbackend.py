@@ -1,3 +1,5 @@
+from countryinfo import CountryInfo
+import requests
 from flask import Flask
 from flask_cors import CORS
 from flask import Blueprint
@@ -6,12 +8,14 @@ from flask import request
 from flask import make_response
 from datetime import date
 import datetime
+import json
 from flask_mysql_connector import MySQL
 import configuracionservidor 
 import calendar
 from procconectar import conectUserDatabase
 import smtplib
 from email.message import EmailMessage
+import mysql.connector as connector
 
 
 loginbackend_api = Blueprint('loginbackend_api',__name__)
@@ -38,9 +42,9 @@ def registerbackend_configuredatabasegeneral():
     
     if aerror == False:
        try:          
-          mydb = mysql.connector.connect(host="127.0.0.1",user="root",password="00100267590")
+          mydb = connector.connect(host="127.0.0.1",user="root",password="00100267590")
           mycursor = mydb.cursor()
-          mycursor.execute("create database if not exists generales")
+          mycursor.execute("create database if not exists general")
 
           conectar = mysql.connection
           mycursor = conectar.cursor(dictionary=True)
@@ -58,9 +62,11 @@ def registerbackend_configuredatabasegeneral():
 
           sql = "CREATE TABLE IF NOT EXISTS transacciones(fecha date,paypal varchar(255), id varchar(255), total varchar(255),realizada varchar(255))"
           mycursor.execute(sql)
-          
 
-          conectar.close()
+          sql = "CREATE TABLE IF NOT EXISTS Currencies(fecha date,Country varchar(255), valor varchar(255))"
+          mycursor.execute(sql)
+
+
           res = make_response("Success",200)
           return res
        except Exception as e:
@@ -78,7 +84,7 @@ def registerbackend_sendcode():
         
     email = row["email"]
     code = row["code"]
-   
+    print(code)
 
     msg = EmailMessage()
     msg['Subject'] = 'PrestaQuiK Contacto'
@@ -189,7 +195,7 @@ def registerbackend_registrar():
           connectionUser.commit()
 
           sql = "insert into Company(nombre,direccion,telefono,pais) values(%s,%s,%s,%s)"
-          val = ('','','','')
+          val = ('','','',row["country"])
           mycursor.execute(sql,val)
           connectionUser.commit()
 
@@ -199,9 +205,30 @@ def registerbackend_registrar():
           mycursor.execute(sql,val)
           connectionUser.commit()
 
+          print(json.loads(row["country"])["label"])   
+          conectar = mysql.connection
+          mycursor = conectar.cursor()
+          currency = CountryInfo(json.loads(row["country"])["label"]).currencies()[0]
+          sql = "select * from currencies where country = "+"'"+currency+"'"
+          mycursor.execute(sql)
+          country = mycursor.fetchone()
 
+          if country == None:
+            url = "https://api.apilayer.com/fixer/latest?symbols="+currency+"&base=USD"
+            payload = {}
+            headers= {
+              "apikey": "Xcn6D05klxkrYHVAZk9lalp6Nvnvwlvf"
+            }
+            response = requests.request("GET", url, headers=headers, data = payload)
+            result = json.loads(response.text)
+            
+            sql = "insert into currencies(fecha,Country,valor) values(%s,%s,%s)"
+            date = datetime.datetime.today()
+            val = (date,currency,str(result["rates"][currency]))
+            mycursor.execute(sql,val)
+            conectar.commit()
 
-          res = make_response(jsonify({"success":"success"}),200)
+          res = make_response(jsonify({"success":currency}),200)
           return res 
               
        except Exception as e:
@@ -255,9 +282,43 @@ def loginbackend_login():
                salida["diffday"] = daysdif
              else:
                salida["diffday"] = "notdemo"
-
              salida["plan"] = ultFactura[0]["plan"]
 
+             sql = "select * from company"
+             mycursor.execute(sql)
+             country = mycursor.fetchone()
+             pais = json.loads(country["pais"])["label"]
+             salida["country"] = pais
+
+             conectar = mysql.connection
+             mycursor = conectar.cursor(dictionary=True)
+             
+             currency = CountryInfo(pais).currencies()[0]
+             sql = "select * from currencies where Country = "+"'"+currency+"'"
+             mycursor.execute(sql)
+             country = mycursor.fetchone()
+             salida["currency"] = country["valor"]
+             
+
+             if country != None:
+               end_date = country["fecha"] + datetime.timedelta(days=15)
+               daysdif = diff_month(end_date,datetime.date.today())     
+               
+               if daysdif <= 0:
+                  url = "https://api.apilayer.com/fixer/latest?symbols="+currency+"&base=USD"
+                  payload = {}
+                  headers= {"apikey": "Xcn6D05klxkrYHVAZk9lalp6Nvnvwlvf"}
+                  response = requests.request("GET", url, headers=headers, data = payload)
+                  result = json.loads(response.text)
+                  date = datetime.datetime.today()
+
+                  sql = "update users set date=%s,valor=%s where Country=%s"
+                  val = (date,str(result["rates"][currency]),currency)
+                  mycursor.execute(sql,val)
+                  conectar.commit()
+
+
+            
              
              res = make_response(jsonify(salida),200)
              return res 

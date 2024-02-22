@@ -1,3 +1,4 @@
+from countryinfo import CountryInfo
 from flask import Flask
 from flask_cors import CORS
 from flask_mysql_connector import MySQL
@@ -88,13 +89,18 @@ def not_found(e):
 @application.route('/geocode',methods=['POST','GET'])
 def geocode():
   gmaps_key = googlemaps.Client(key="AIzaSyAvgrqvE_JpqV_FzhrYsi6uhiOjgo8J95M")
-  add_1 = "residencial los hidalgos,Los alcarrizos,santo domingo, republica dominicana"
+  add_1 = "guayacanes, republica dominicana"
   g = gmaps_key.geocode(add_1)
   lat = g[0]["geometry"]["location"]["lat"]
   long = g[0]["geometry"]["location"]["lng"]
   print('Latitude: '+str(lat)+', Longitude: '+str(long))
   return "success"
-   
+
+@application.route('/currencies',methods=['POST','GET'])
+def get_cities():
+
+    return "matching_cities"
+    
 
 @application.route('/contactprosecom',methods=['POST','GET'])
 def contactprosecom():
