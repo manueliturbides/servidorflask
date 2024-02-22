@@ -35,7 +35,8 @@ def ingresarsolicitudprestamo():
        aerror = False
 
        #row['user'] = ""
-
+       latitud  = ""
+       longitud = ""
        if aerror == False:
           if len(row['cedula']) == 0 or len(row['cedula']) != 11:
              aerror = True
@@ -191,19 +192,19 @@ def ingresarsolicitudprestamo():
           comentario,financiamiento,plazo,formapago,interes,\
           mora,cedulafiador,nombrefiador,telefonofiador,direccionfiador,\
           tipofinanciamiento,valorcuotas,deudatotal,edad,celular,\
-          sexo,ecivil,dependientes,user,fecha_crea,fecha_mod,aprobado) values(%s,%s,%s,%s,%s,\
+          sexo,ecivil,dependientes,user,fecha_crea,fecha_mod,aprobado,longitud,latitud) values(%s,%s,%s,%s,%s,\
           %s,%s,%s,%s,%s,\
           %s,%s,%s,%s,%s,\
           %s,%s,%s,%s,%s,\
           %s,%s,%s,%s,%s,\
-          %s,%s,%s,%s,%s,%s,%s)"
+          %s,%s,%s,%s,%s,%s,%s,%s,%s)"
 
           val = (row['cedula'],row['nombres'],row['apellidos'],row['provincia'],row['direccion'],\
                  row['telefono'],row['sector'],row['nacionalidad'],row['nombrepila'],row['email'],\
                  row['comentario'],float(row['financiamiento']),int(row['plazo']),row['formapago'],row['interes'],\
                  row['mora'],row['cedulafiador'],row['nombrefiador'],row['telefonofiador'],row['direccionfiador'],\
                  row['tiposolicitud'],float(row['valorcuotas']),float(row['deudatotal']),row['edad'],row['celular'],\
-                 row['sexo'],row['ecivil'],row['dependientes'],row['user'],datetime.now().date(),datetime.now().date(),"N")
+                 row['sexo'],row['ecivil'],row['dependientes'],row['user'],datetime.now().date(),datetime.now().date(),"N",latitud,longitud)
           mycursor.execute(sql,val)
 
   
