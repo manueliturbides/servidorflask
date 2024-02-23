@@ -43,11 +43,14 @@ def historicodepagos():
           format(sum(descinte),2) as Descuento,norecibo as id from pagos where cedula = "+"'"+row['cedula']+"' and noprest = "+"'"+row['noprest']+"'"+\
           " group by norecibo"
 
-          print(sql)
           
           mycursor.execute(sql)
           data = mycursor.fetchall()
-          print(data)
+
+          if mycursor.rowcount == 0:
+             aerror = True
+             error = "No hay datos para recuperar" 
+          
     except Exception as e:
           print(e)
           aerror = True

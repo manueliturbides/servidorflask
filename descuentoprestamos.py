@@ -44,7 +44,10 @@ def consultadescuentoprestamos():
           mycursor.execute(sql)
           data = mycursor.fetchall()
           
-          print(data)
+          if mycursor.rowcount == 0:
+             aerror = True
+             error = "No hay datos para recuperar" 
+          
           conectar.close() 
     except Exception as e:
           print(e)

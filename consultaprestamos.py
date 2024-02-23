@@ -96,6 +96,10 @@ def imprimircontrato():
           mycursor.execute(sql)
           data = mycursor.fetchall()
 
+          if mycursor.rowcount == 0:
+             aerror = True
+             error = "No hay datos para recuperar"  
+
           mycursor = conectar.cursor(dictionary=True)
           sql = "select nombre as nombreempresa,direccion as direccionempresa,pais from company"
           mycursor.execute(sql)

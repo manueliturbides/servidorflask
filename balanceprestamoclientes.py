@@ -46,31 +46,28 @@ def balanceprestamoscliente():
           inner join solicit on prestamo.nosolic = solicit.id \
           where prestamo.status = 'A'"
           
-          
-          print(sql)
-          
           mycursor.execute(sql)
           data = mycursor.fetchall()
           
           
-          sql = "select sum(pagosres.vpagint) as monto,monthname(pagosres.fecha) as mes,month(pagosres.fecha) as mesnumero from pagosres group by month(pagosres.fecha) "
-          mycursor.execute(sql)
-          grafico = mycursor.fetchall()
+          if mycursor.rowcount != 0:
+             sql = "select sum(pagosres.vpagint) as monto,monthname(pagosres.fecha) as mes,month(pagosres.fecha) as mesnumero from pagosres group by month(pagosres.fecha) "
+             mycursor.execute(sql)
+             grafico = mycursor.fetchall()
 
-
+             listavalor = []
+             listames = []
+             listamesnumero = []
+             for x in grafico:
+                 listavalor.append(str(x['monto']))
+                 listames.append(x['mes'])
+                 listamesnumero.append(x['mesnumero']) 
+          else:
+              aerror = True
+              error = "No hay datos para recuperar" 
           
-          listavalor = []
-          listames = []
-          listamesnumero = []
-          for x in grafico:
-              print("manuel")
-              listavalor.append(str(x['monto']))
-              listames.append(x['mes'])
-              listamesnumero.append(x['mesnumero']) 
           conectar.close() 
-          print(listavalor)
-          print(listames)
-          print(listamesnumero)
+          
     except Exception as e:
           print(e)
           aerror = True

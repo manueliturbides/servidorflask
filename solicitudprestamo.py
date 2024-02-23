@@ -8,7 +8,8 @@ from datetime import datetime
 from flask_mysql_connector import MySQL
 import configuracionservidor 
 from procconectar import conectUserDatabase
-
+import pandas as pd
+import googlemaps
 
 ingresosolicitudprestamo_api = Blueprint('ingresosolicitudprestamo_api',__name__)
 
@@ -23,6 +24,18 @@ mysql = MySQL(app)
 CORS(app)
 mysql = MySQL(app)
 
+
+@ingresosolicitudprestamo_api.route("/api/getcities",methods=['POST','GET'])
+def getcities():
+    row = request.get_json()
+    country = row["country"]
+    df = pd.read_csv("Herramientas/worldcities.csv")
+    
+    matching_cities = df[df['country'].str.lower() == country.lower()]['city_ascii'].tolist()
+   
+    return jsonify({'data':matching_cities})
+ 
+
 @ingresosolicitudprestamo_api.route("/api/ingresarsolicitudprestamo",methods=['POST','GET'])
 def ingresarsolicitudprestamo():
     
@@ -35,8 +48,6 @@ def ingresarsolicitudprestamo():
        aerror = False
 
        #row['user'] = ""
-       latitud  = ""
-       longitud = ""
        if aerror == False:
           if len(row['cedula']) == 0 or len(row['cedula']) != 11:
              aerror = True
@@ -182,6 +193,11 @@ def ingresarsolicitudprestamo():
              aerror = True
              error = "La cedula del fiador no pueden estar en blanco "
        
+       gmaps_key = googlemaps.Client(key="AIzaSyAvgrqvE_JpqV_FzhrYsi6uhiOjgo8J95M")
+       add_1 = row["direccion"]+","+row["provincia"]+" ,"+row["pais"]
+       g = gmaps_key.geocode(add_1)
+       latitud = g[0]["geometry"]["location"]["lat"]
+       longitud = g[0]["geometry"]["location"]["lng"]
        
 
        if aerror == False:

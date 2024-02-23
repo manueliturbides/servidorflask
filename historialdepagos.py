@@ -51,9 +51,10 @@ def historialdepagos():
           #from prestamo \
           #where prestamo.cedula = "+"'"+row['cedula']+"'"
         
-        
-          print(sql)
-        
+          if mycursor.rowcount == 0:
+             aerror = True
+             error = "No hay datos para recuperar" 
+          
           mycursor.execute(sql)
           data = mycursor.fetchall()
           

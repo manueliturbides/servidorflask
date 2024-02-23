@@ -44,25 +44,27 @@ def balancecuotasantiguedad():
           inner join solicit on amort.nosolic = solicit.id \
           where amort.fecha <"+" '"+str(row['fecha'])+"' and amort.status <> 'P'"+"group by amort.noprest"
           
-          print(sql)
         
           mycursor.execute(sql)
           data = mycursor.fetchall()
           
-          print(data)
+          if mycursor.rowcount != 0:
+             datafinal = []
+             for x in data:
+                 if row['tipodeoperacion'] == '>':
+                    if x['Cuotas'] > int(row['cuotas']):
+                       datafinal.append(x)
 
-          datafinal = []
-          for x in data:
-              if row['tipodeoperacion'] == '>':
-                 if x['Cuotas'] > int(row['cuotas']):
-                    datafinal.append(x)
+                 if row['tipodeoperacion'] == '=':
+                    if x['Cuotas'] == int(row['cuotas']):
+                       datafinal.append(x)
 
-              if row['tipodeoperacion'] == '=':
-                 if x['Cuotas'] == int(row['cuotas']):
-                    datafinal.append(x)
+             sql = ""
+          else:
+             aerror = True
+             error = "No hay datos para recuperar"   
 
-          sql = ""
-          
+
     except Exception as e:
           print(e)
           aerror = True

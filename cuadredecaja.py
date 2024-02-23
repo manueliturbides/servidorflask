@@ -45,11 +45,14 @@ def cuadredecaja():
           inner join prestamo on prestamo.noprest = pagos.noprest \
           where pagos.fecha between "+"'"+row['fechadesde']+"' and "+"'"+row['fechahasta']+"'"
 
-          print(sql)
           
           mycursor.execute(sql)
           data = mycursor.fetchall()
-          print(data)
+          
+          if mycursor.rowcount == 0:
+             error = True
+             error = "No hay datos que recuperar"
+              
     except Exception as e:
           print(e)
           aerror = True

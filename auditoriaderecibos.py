@@ -43,12 +43,13 @@ def auditoriaderecibos():
           concat(prestamo.nombres,' ',prestamo.apellidos) as Nombres,format(sum(pagos.descinte),2) as Descuento,pagos.norecibo as id from pagos inner join prestamo on prestamo.noprest = pagos.noprest \
           where pagos.fecha between "+"'"+row['fechadesde']+"' and  "+"'"+row['fechahasta']+"'"+\
           "  group by pagos.norecibo"
-
-          print(sql)
-          
+ 
           mycursor.execute(sql)
           data = mycursor.fetchall()
-          print(data)
+
+          if mycursor.rowcount == 0:
+              aerror = True
+              error = "No hay datos seleccionados"  
     except Exception as e:
           print(e)
           aerror = True

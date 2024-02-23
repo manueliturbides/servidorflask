@@ -440,16 +440,6 @@ def createsubscription():
     return jsonify(result["jsonResponse"]), result["httpStatusCode"]
 
 
-@billingbackend_api.route("/api/getcities",methods=['POST','GET'])
-def getcities():
-    row = request.get_json()
-    country = row["country"]
-    df = pd.read_csv("worldcities.csv")
-    
-    matching_cities = df[df['country'].str.lower() == country.lower()]['city_ascii'].tolist()
-   
-    return jsonify({'data':matching_cities})
- 
  
 @billingbackend_api.route("/api/limitedeclientes",methods=['POST','GET'])
 def limitedeclientes():

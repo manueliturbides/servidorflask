@@ -49,6 +49,10 @@ def consultarpagos():
           mycursor.execute(sql)
           data = mycursor.fetchall()
           
+          if mycursor.rowcount == 0:
+             aerror = True
+             error = "No hay datos para recuperar" 
+
           conectar.close() 
            
     except Exception as e:

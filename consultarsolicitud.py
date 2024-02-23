@@ -8,8 +8,7 @@ from datetime import datetime
 from flask_mysql_connector import MySQL
 import configuracionservidor 
 from datetime import datetime,timedelta
-from procconectar import conectServerDatabase
-
+from procconectar import conectUserDatabase
 
 consultasolicitud_api = Blueprint('consultasolicitud_api',__name__)
 
@@ -47,6 +46,9 @@ def consultarsolicitud():
           mycursor.execute(sql)
           data = mycursor.fetchall()
           
+          if mycursor.rowcount == 0:
+             aerror = True
+             error = "No hay datos que recuperar" 
           
           sql = "select sum(solicit.deudatotal) as monto,monthname(solicit.fecha_crea) as mes from solicit group by month(fecha_crea) "
           mycursor.execute(sql)
