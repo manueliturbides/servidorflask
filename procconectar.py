@@ -33,7 +33,7 @@ def conectUserDatabase(nombre):
        email varchar(45),comentario varchar(450),financiamiento float,plazo int,formapago varchar(45),interes float,mora float,\
        cedulafiador varchar(15),nombrefiador varchar(100),telefonofiador varchar(15),tipofinanciamiento varchar(15),valorcuotas float,deudatotal float,aprobado varchar(1),\
        aprobadopor varchar(25),edad varchar(10),sexo varchar(45),direccionfiador varchar(100),celular varchar(45),\
-       ecivil varchar(15),dependientes varchar(15),user varchar(100),fecha_crea date, fecha_mod date,longitud varchar(50),latitud varchar(50), PRIMARY KEY(id))")
+       ecivil varchar(15),dependientes varchar(15),user varchar(100),fecha_crea date, fecha_mod date,longitud varchar(50),latitud varchar(50),foto mediumblob, PRIMARY KEY(id))")
  
        mycursor.execute("create table if not exists amort(id mediumint not null auto_increment,noprest int,nosolic int,cedula varchar(15),nocuota int,\
                         fecha date,cuota float,capital float,interes float,balance float, status varchar(1),vpagcap float,vpagint float,\
