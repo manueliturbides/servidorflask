@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask,send_file,url_for
 from flask_cors import CORS
 from flask import Blueprint
 from flask import jsonify
@@ -10,6 +10,7 @@ import configuracionservidor
 from procconectar import conectUserDatabase
 import pandas as pd
 import googlemaps
+import io
 
 ingresosolicitudprestamo_api = Blueprint('ingresosolicitudprestamo_api',__name__)
 
@@ -34,7 +35,20 @@ def getcities():
     matching_cities = df[df['country'].str.lower() == country.lower()]['city_ascii'].tolist()
    
     return jsonify({'data':matching_cities})
+
+@ingresosolicitudprestamo_api.route('/ftuser/<_id>')
+def logo(_id):
+   connectionUser = conectUserDatabase(_id)
+   mycursor = connectionUser.cursor(dictionary=True)
+   
+   sqlCompany = "select foto from solicit"
+   mycursor.execute(sqlCompany)
+   solicit = mycursor.fetchall()
  
+   response =  send_file(io.BytesIO(solicit[0]["foto"]),mimetype="image/*")
+
+   return response
+
 
 @ingresosolicitudprestamo_api.route("/api/ingresarsolicitudprestamo",methods=['POST','GET'])
 def ingresarsolicitudprestamo():

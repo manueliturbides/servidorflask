@@ -267,11 +267,17 @@ def loginbackend_login():
           sql = "select * from users where email = "+"'"+row['email']+"' and password = "+"'"+row['password']+"'"
           mycursor.execute(sql)
           miuser = mycursor.fetchall()
-          salida["miuser"] = miuser
+          
 
           if mycursor.rowcount != 0:
              connectionUser = conectUserDatabase(miuser[0]["parent"])
              mycursor = connectionUser.cursor(dictionary=True)
+             
+             mycursor.execute(sql)
+             miuser = mycursor.fetchall()
+             salida["miuser"] = miuser
+             print(salida)
+
              sql = "select * from facturas order by id desc limit 1"
              mycursor.execute(sql)
              ultFactura = mycursor.fetchall()
