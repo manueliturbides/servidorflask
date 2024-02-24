@@ -1,3 +1,4 @@
+import json
 from flask import Flask,send_file,url_for
 from flask_cors import CORS
 from flask import Blueprint
@@ -36,12 +37,12 @@ def getcities():
    
     return jsonify({'data':matching_cities})
 
-@ingresosolicitudprestamo_api.route('/ftuser/<_id>')
-def logo(_id):
+@ingresosolicitudprestamo_api.route('/ftuser/<_id>/<num>')
+def ftuser(_id,num):
    connectionUser = conectUserDatabase(_id)
    mycursor = connectionUser.cursor(dictionary=True)
    
-   sqlCompany = "select foto from solicit"
+   sqlCompany = "select * from solicit where id = "+num
    mycursor.execute(sqlCompany)
    solicit = mycursor.fetchall()
  
@@ -55,7 +56,11 @@ def ingresarsolicitudprestamo():
     
     aerror = False
     salida = {}
-    row = request.get_json()
+    imagefile = request.files['image']
+    bin_file = imagefile.read()
+    jsonData = request.form["json"]
+
+    row = json.loads(jsonData)
     try:
        ###validar campos de entrada
 
@@ -216,29 +221,37 @@ def ingresarsolicitudprestamo():
 
        if aerror == False:
           conectar = conectUserDatabase(row["parent"])
-          mycursor = conectar.cursor()
+          mycursor = conectar.cursor(dictionary=True)
           sql = "insert into solicit(cedula,nombres,apellidos,provincia,direccion,\
           telefono,sector,nacionalidad,nombrepila,email,\
           comentario,financiamiento,plazo,formapago,interes,\
           mora,cedulafiador,nombrefiador,telefonofiador,direccionfiador,\
           tipofinanciamiento,valorcuotas,deudatotal,edad,celular,\
-          sexo,ecivil,dependientes,user,fecha_crea,fecha_mod,aprobado,longitud,latitud) values(%s,%s,%s,%s,%s,\
+          sexo,ecivil,dependientes,user,fecha_crea,fecha_mod,aprobado,longitud,latitud,foto) values(%s,%s,%s,%s,%s,\
           %s,%s,%s,%s,%s,\
           %s,%s,%s,%s,%s,\
           %s,%s,%s,%s,%s,\
           %s,%s,%s,%s,%s,\
-          %s,%s,%s,%s,%s,%s,%s,%s,%s)"
+          %s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
 
           val = (row['cedula'],row['nombres'],row['apellidos'],row['provincia'],row['direccion'],\
                  row['telefono'],row['sector'],row['nacionalidad'],row['nombrepila'],row['email'],\
                  row['comentario'],float(row['financiamiento']),int(row['plazo']),row['formapago'],row['interes'],\
                  row['mora'],row['cedulafiador'],row['nombrefiador'],row['telefonofiador'],row['direccionfiador'],\
                  row['tiposolicitud'],float(row['valorcuotas']),float(row['deudatotal']),row['edad'],row['celular'],\
-                 row['sexo'],row['ecivil'],row['dependientes'],row['user'],datetime.now().date(),datetime.now().date(),"N",latitud,longitud)
+                 row['sexo'],row['ecivil'],row['dependientes'],row['user'],datetime.now().date(),datetime.now().date(),"N",latitud,longitud,bin_file)
           mycursor.execute(sql,val)
 
   
           conectar.commit()
+
+          sql = "SELECT id FROM solicit order by id desc limit 1"
+          mycursor.execute(sql)
+          ultSolicit = mycursor.fetchone()
+          url = url_for("ingresosolicitudprestamo_api.ftuser", _id=row["parent"],num=ultSolicit["id"])
+          print(url)
+
+
           conectar.close() 
        
     except Exception as e:

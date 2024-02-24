@@ -152,7 +152,7 @@ def usersconfigbackend_updatecompanylogo():
     error = {}
     imagefile = request.files['image']
     bin_file = imagefile.read()
-    print(type(bin_file))
+    
     if aerror == False:
        try:
           connectionUser = conectUserDatabase(request.form["parent"])
