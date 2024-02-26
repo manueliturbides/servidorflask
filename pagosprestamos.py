@@ -46,7 +46,7 @@ def recuperartablaamortizacion():
               ((solicit.valorcuotas*(solicit.mora/100))/30)*(datediff("+"'"+str(datetime.now().date())+"'"+",amort.fecha)),'0.00') as Mora,\
               '0.00' as Pagado,'0.00' as PagMora, 0.0 as Balance, \
               (amort.interes-amort.vpagint) as sinteres,(amort.capital-amort.vpagcap) as scapital,amort.noprest as Snoprest,\
-              solicit.id \
+              solicit.id as id \
               from amort \
               inner join prestamo on amort.noprest = prestamo.noprest \
               inner join solicit on amort.nosolic = solicit.id \
@@ -172,7 +172,7 @@ def guardardatospagos():
 
           print(vinterespagado)
           sql = "update prestamo set vpagcap = vpagcap + "+"'"+str(vcapitalpagado)+"',"+\
-          "vpagint = vpagint + "+"'"+str(tvinterespagado)+"',"+\
+          "vpagint = vpagint + "+"'"+str(vinterespagado)+"',"+\
           "vpagmora = vpagmora + "+"'"+str(x['Mora'])+"',"+\
           " status = if(prestamo.solicitado-prestamo.vpagcap = 0,'P','A'), "+\
           " fultpago = "+"'"+str(datetime.now().date())+"',"+\

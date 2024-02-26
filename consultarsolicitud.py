@@ -49,16 +49,16 @@ def consultarsolicitud():
           if mycursor.rowcount == 0:
              aerror = True
              error = "No hay datos que recuperar" 
-          
-          sql = "select sum(solicit.deudatotal) as monto,monthname(solicit.fecha_crea) as mes from solicit group by month(fecha_crea) "
-          mycursor.execute(sql)
-          grafico = mycursor.fetchall()
+          else:   
+             sql = "select sum(solicit.deudatotal) as monto,monthname(solicit.fecha_crea) as mes from solicit group by month(fecha_crea) "
+             mycursor.execute(sql)
+             grafico = mycursor.fetchall()
 
-          listavalor = []
-          listames = []
-          for x in grafico:
-              listavalor.append(x['monto'])
-              listames.append(x['mes']) 
+             listavalor = []
+             listames = []
+             for x in grafico:
+                 listavalor.append(x['monto'])
+                 listames.append(x['mes']) 
           conectar.close() 
     except Exception as e:
           print(e)

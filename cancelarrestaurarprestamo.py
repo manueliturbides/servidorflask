@@ -112,7 +112,7 @@ def recuperartodosprestamos():
     
     aerror = False
     salida = {}
-    #row = request.get_json()
+    row = request.get_json()
     
     try:
        ###validar campos de entrada

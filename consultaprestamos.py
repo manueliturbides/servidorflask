@@ -42,7 +42,7 @@ def consultarprestamo():
           mycursor = conectar.cursor(dictionary=True)
           sql = "select prestamo.noprest as Noprest,date_format(prestamo.fecha,'%d-%m-%Y') as Fecha,concat(prestamo.nombres,' ',prestamo.apellidos) as Nombres,\
           format(solicit.deudatotal,2) as Valor,\
-          prestamo.status as Status,prestamo.noprest as id from prestamo \
+          prestamo.status as Status,prestamo.noprest as id, solicit.id as Nosolic from prestamo \
           inner join solicit on prestamo.nosolic = solicit.id \
           where prestamo.fecha between "+"'"+row['fechadesde']+"' and "+"'"+row['fechahasta']+"'"
           mycursor.execute(sql)
@@ -90,7 +90,7 @@ def imprimircontrato():
           sql = "select upper(concat(prestamo.nombres,' ',prestamo.apellidos)) as name, upper(solicit.direccion) as direccion, \
           upper(solicit.provincia) as ciudad,prestamo.cedula as cedula, format(solicit.deudatotal,2) as deudatotal, \
           format(solicit.mora,2) as mora,format(solicit.interes,2) as interes,\
-          format(solicit.valorcuotas,2) as cuotas, day(prestamo.fecha) as dias,year(prestamo.fecha) as ano from prestamo \
+          format(solicit.valorcuotas,2) as cuotas, day(prestamo.fecha) as dias,year(prestamo.fecha) as ano,solicit.id as Nsolic from prestamo \
           inner join solicit on prestamo.nosolic = solicit.id \
           where prestamo.noprest = "+"'"+str(row['noprest'])+"'"
           mycursor.execute(sql)

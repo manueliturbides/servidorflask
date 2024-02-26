@@ -65,9 +65,6 @@ def interesescobradosperiodos():
                  listames.append(x['mes'])
                  listamesnumero.append(x['mesnumero']) 
           conectar.close() 
-          print(listavalor)
-          print(listames)
-          print(listamesnumero)
     except Exception as e:
           print(e)
           aerror = True
