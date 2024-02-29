@@ -38,7 +38,7 @@ from supportbackend import supportbackend_api
 from procconectar import conectUserDatabase
 import googlemaps
 from rutas import rutas_api
-
+from dashboard import dashboard_api
 
 import configuracionservidor 
 
@@ -77,6 +77,7 @@ application.register_blueprint(billingbackend_api)
 application.register_blueprint(vendedoresbackend_api)
 application.register_blueprint(supportbackend_api)
 application.register_blueprint(rutas_api)
+application.register_blueprint(dashboard_api)
 
 @application.route("/")
 def servirpaginaestatica():

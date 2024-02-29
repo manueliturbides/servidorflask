@@ -17,7 +17,6 @@ import smtplib
 from email.message import EmailMessage
 import mysql.connector as connector
 
-
 loginbackend_api = Blueprint('loginbackend_api',__name__)
 
 app = Flask(__name__)
@@ -42,16 +41,16 @@ def registerbackend_configuredatabasegeneral():
     
     if aerror == False:
        try:          
-          mydb = connector.connect(host="127.0.0.1",user="root",password="00100267590")
+          mydb = connector.connect(host="general.c78ou26kqg7e.us-east-1.rds.amazonaws.com",user="root",password="00100267590",port = 3306)
           mycursor = mydb.cursor()
           mycursor.execute("create database if not exists general")
 
           conectar = mysql.connection
           mycursor = conectar.cursor(dictionary=True)
-          sql = "CREATE TABLE IF NOT EXISTS Users (id varchar(255),parent varchar(255),email varchar(255),password varchar(255));"
+          sql = "CREATE TABLE IF NOT EXISTS users (id varchar(255),parent varchar(255),email varchar(255),password varchar(255));"
           mycursor.execute(sql)
 
-          sql = "CREATE TABLE IF NOT EXISTS Vendedores (id varchar(255),email varchar(255),password varchar(255),promcode varchar(255), fecha date);"
+          sql = "CREATE TABLE IF NOT EXISTS vendedores (id varchar(255),email varchar(255),password varchar(255),promcode varchar(255), fecha date);"
           mycursor.execute(sql)
 
           sql = "CREATE TABLE IF NOT EXISTS Planes (name varchar(255),id varchar(255),product_id varchar(255));"
@@ -132,7 +131,6 @@ def registerbackend_validateemail():
        aerror = True
        error = "Contraseña debe tener mas de 5 letras"
 
-    
     if aerror == False:
        try:
           conectar = mysql.connection
@@ -142,9 +140,11 @@ def registerbackend_validateemail():
           misusers = mycursor.fetchall()
  
           if len(misusers) == 0:     
+             print(misusers)
              res = make_response(jsonify({"userExist":False}),200)
              return res 
           else:
+             print(misusers)
              aerror = True
              error = {"userExist":True}
        
@@ -181,7 +181,7 @@ def registerbackend_registrar():
        try:
           conectar = mysql.connection
           mycursor = conectar.cursor()
-          sql = "insert into Users(id,parent,email,password) values(%s,%s,%s,%s)"
+          sql = "insert into users(id,parent,email,password) values(%s,%s,%s,%s)"
           val = (row["id"],row["parent"],row["email"],row["password"])
           mycursor.execute(sql,val)
           conectar.commit()
@@ -189,12 +189,12 @@ def registerbackend_registrar():
           connectionUser = conectUserDatabase(row["parent"])
           mycursor = connectionUser.cursor()
 
-          sql = "insert into Users(id,parent,nombre,apellido,email,password,permissions) values(%s,%s,%s,%s,%s,%s,%s)"
+          sql = "insert into users(id,parent,nombre,apellido,email,password,permissions) values(%s,%s,%s,%s,%s,%s,%s)"
           val = (row["id"],row["parent"],"","",row["email"],row["password"],"administrator")
           mycursor.execute(sql,val)
           connectionUser.commit()
 
-          sql = "insert into Company(nombre,direccion,telefono,pais) values(%s,%s,%s,%s)"
+          sql = "insert into company(nombre,direccion,telefono,pais) values(%s,%s,%s,%s)"
           val = ('','','',row["country"])
           mycursor.execute(sql,val)
           connectionUser.commit()
@@ -209,7 +209,7 @@ def registerbackend_registrar():
           conectar = mysql.connection
           mycursor = conectar.cursor()
           currency = CountryInfo(json.loads(row["country"])["label"]).currencies()[0]
-          sql = "select * from currencies where country = "+"'"+currency+"'"
+          sql = "select * from Currencies where country = "+"'"+currency+"'"
           mycursor.execute(sql)
           country = mycursor.fetchone()
 
@@ -222,7 +222,7 @@ def registerbackend_registrar():
             response = requests.request("GET", url, headers=headers, data = payload)
             result = json.loads(response.text)
             
-            sql = "insert into currencies(fecha,Country,valor) values(%s,%s,%s)"
+            sql = "insert into Currencies(fecha,Country,valor) values(%s,%s,%s)"
             date = datetime.datetime.today()
             val = (date,currency,str(result["rates"][currency]))
             mycursor.execute(sql,val)
@@ -265,19 +265,18 @@ def loginbackend_login():
           conectar = mysql.connection
           mycursor = conectar.cursor(dictionary=True)
           sql = "select * from users where email = "+"'"+row['email']+"' and password = "+"'"+row['password']+"'"
+      
           mycursor.execute(sql)
           miuser = mycursor.fetchall()
-          
-
+      
           if mycursor.rowcount != 0:
              connectionUser = conectUserDatabase(miuser[0]["parent"])
-             mycursor = connectionUser.cursor(dictionary=True)
-             
+             mycursor = connectionUser.cursor(dictionary=True)       
              mycursor.execute(sql)
              miuser = mycursor.fetchall()
+             print(sql)
              salida["miuser"] = miuser
-             print(salida)
-
+             
              sql = "select * from facturas order by id desc limit 1"
              mycursor.execute(sql)
              ultFactura = mycursor.fetchall()
@@ -295,12 +294,13 @@ def loginbackend_login():
              country = mycursor.fetchone()
              pais = json.loads(country["pais"])["label"]
              salida["country"] = pais
+             salida["company"] = country["nombre"]
 
              conectar = mysql.connection
              mycursor = conectar.cursor(dictionary=True)
              
              currency = CountryInfo(pais).currencies()[0]
-             sql = "select * from currencies where Country = "+"'"+currency+"'"
+             sql = "select * from Currencies where Country = "+"'"+currency+"'"
              mycursor.execute(sql)
              country = mycursor.fetchone()
              salida["currency"] = country["valor"]

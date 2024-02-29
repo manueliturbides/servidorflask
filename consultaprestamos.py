@@ -117,4 +117,50 @@ def imprimircontrato():
     if aerror == False:
        res = make_response(jsonify({"data":data,"dataempresa":dataempresa}),200)
        return res; 
-      
+
+@consultaprestamos_api.route("/api/consultarprestamogeneral",methods=['POST','GET'])
+def consultarprestamogeneral():
+    
+    aerror = False
+    salida = {}
+    row = request.get_json()
+    print(row)
+    try:
+       ###validar campos de entrada
+
+       aerror = False
+
+       if aerror == False:
+          
+          conectar = conectUserDatabase(row['parent'])
+          mycursor = conectar.cursor(dictionary=True)
+          sql = "select prestamo.noprest as Noprest,date_format(prestamo.fecha,'%d-%m-%Y') as Fecha,concat(prestamo.nombres,' ',prestamo.apellidos) as Nombres,\
+          format(solicit.deudatotal,2) as Valor,\
+          prestamo.status as Status,prestamo.noprest as id, solicit.id as Nosolic from prestamo \
+          inner join solicit on prestamo.nosolic = solicit.id limit 30"
+          
+          mycursor.execute(sql)
+          data = mycursor.fetchall()
+          
+          
+          sql = "select sum(prestamo.solicitado) as monto,monthname(prestamo.fecha) as mes from prestamo group by month(fecha) limit 30"
+          mycursor.execute(sql)
+          grafico = mycursor.fetchall()
+
+          listavalor = []
+          listames = []
+          for x in grafico:
+              listavalor.append(x['monto'])
+              listames.append(x['mes']) 
+          conectar.close() 
+    except Exception as e:
+          print(e)
+          aerror = True
+          error = "Problemas para conectar la tabla "+str(e)        
+       
+    if aerror == True:
+       res = make_response(jsonify({"Error": error}),400)
+       return res; 
+    if aerror == False:
+       res = make_response(jsonify({"data":data,"listavalor":listavalor,"listames":listames}),200)
+       return res; 

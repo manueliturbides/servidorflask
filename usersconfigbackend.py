@@ -83,7 +83,7 @@ def usersconfigbackend_adduser():
           miuser = mycursor.fetchall()
  
           if len(miuser) == 0:     
-            sql = "insert into Users(id,parent,email,password) values(%s,%s,%s,%s)"
+            sql = "insert into users(id,parent,email,password) values(%s,%s,%s,%s)"
             val = (row["id"],row["parent"],row["email"],row["password"])
             mycursor.execute(sql,val)
             conectar.commit()
@@ -91,7 +91,7 @@ def usersconfigbackend_adduser():
             connectionUser = conectUserDatabase(row["parent"])
             mycursor = connectionUser.cursor()
 
-            sql = "insert into Users(id,parent,nombre,apellido,email,password,permissions) values(%s,%s,%s,%s,%s,%s,%s)"
+            sql = "insert into users(id,parent,nombre,apellido,email,password,permissions) values(%s,%s,%s,%s,%s,%s,%s)"
             val = (row["id"],row["parent"],row["nombre"],row["apellido"],row["email"],row["password"],row["permissions"])
             mycursor.execute(sql,val)
             connectionUser.commit()
@@ -295,17 +295,17 @@ def usersconfigbackend_newuser():
        try:
           conectar = conectUserDatabase(row["parent"])
           mycursor = conectar.cursor()
-          sql = "insert into Users(id,parent,email,password) values(%s,%s,%s,%s)"
+          sql = "insert into users(id,parent,email,password) values(%s,%s,%s,%s)"
           val = (row["id"],row["parent"],row["email"],row["password"])
           mycursor.execute(sql,val)
           conectar.commit()
           
           connectionUser = conectUserDatabase(row["parent"])
           mycursor = connectionUser.cursor()
-          sql = "CREATE TABLE IF NOT EXISTS Users (id varchar(255) NOT NULL PRIMARY KEY,parent varchar(255),nombre varchar(255),apellido varchar(255),email varchar(255),password varchar(255),permissions varchar(255));"
+          sql = "CREATE TABLE IF NOT EXISTS users (id varchar(255) NOT NULL PRIMARY KEY,parent varchar(255),nombre varchar(255),apellido varchar(255),email varchar(255),password varchar(255),permissions varchar(255));"
           mycursor.execute(sql)
 
-          sql = "insert into Users(id,parent,nombre,apellido,email,password,permissions) values(%s,%s,%s,%s,%s,%s,%s)"
+          sql = "insert into users(id,parent,nombre,apellido,email,password,permissions) values(%s,%s,%s,%s,%s,%s,%s)"
           val = (row["id"],row["parent"],"","",row["email"],row["password"],"administrator")
           mycursor.execute(sql,val)
           connectionUser.commit()

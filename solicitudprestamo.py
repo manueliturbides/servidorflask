@@ -56,8 +56,14 @@ def ingresarsolicitudprestamo():
     
     aerror = False
     salida = {}
-    imagefile = request.files['image']
-    bin_file = imagefile.read()
+
+    try:
+      imagefile = request.files['image']
+      bin_file = imagefile.read()
+    except Exception as e:
+      bin_file = "" 
+    
+    
     jsonData = request.form["json"]
 
     row = json.loads(jsonData)

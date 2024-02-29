@@ -187,7 +187,7 @@ def billingbackend_nuevafactura():
 
           conectar = mysql.connection
           mycursor = conectar.cursor(dictionary=True)
-          sql = "select * from vendedores where promcode = "+"'"+row['promcode']+"'"
+          sql = "select * from Vendedores where promcode = "+"'"+row['promcode']+"'"
           mycursor.execute(sql)
           vendedor = mycursor.fetchone()
           print(vendedor)
@@ -272,7 +272,6 @@ def generate_access_token():
 def createplans():
     aerror = False
     error = {}
-    row = request.get_json()
     access_token = generate_access_token()
     if aerror == False:
         try:

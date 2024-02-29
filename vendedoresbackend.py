@@ -285,7 +285,7 @@ def vendedoresbackend_registrar():
        try:
           connectionUser = conectUserDatabaseVendedor(row["id"])
           mycursor = connectionUser.cursor()
-          sql = "insert into User(id,nombre,email,password,promcode) values(%s,%s,%s,%s,%s)"
+          sql = "insert into user(id,nombre,email,password,promcode) values(%s,%s,%s,%s,%s)"
           val = (row["id"],row["email"].split("@")[0],row["email"],row["password"],row["promcode"])
           print(val)
           mycursor.execute(sql,val)
@@ -299,7 +299,7 @@ def vendedoresbackend_registrar():
 
           conectar = mysql.connection
           mycursor = conectar.cursor()
-          sql = "insert into Vendedores(id,email,password,promcode,fecha) values(%s,%s,%s,%s,%s)"
+          sql = "insert into vendedores(id,email,password,promcode,fecha) values(%s,%s,%s,%s,%s)"
           val = (row["id"],row["email"],row["password"],row["promcode"],datetime.today())
           mycursor.execute(sql,val)
           conectar.commit()

@@ -61,4 +61,42 @@ def auditoriaderecibos():
     if aerror == False:
        res = make_response(jsonify({"data":data}),200)
        return res; 
-      
+
+@auditoriaderecibos_api.route("/api/auditoriaderecibosgeneral",methods=['POST','GET'])
+def auditoriaderecibosgeneral():
+    
+    aerror = False
+    salida = {}
+    row = request.get_json()
+    print(row)
+    try:
+       ###validar campos de entrada
+
+       aerror = False
+
+       if aerror == False:
+          
+          conectar = conectUserDatabase(row['parent'])
+          mycursor = conectar.cursor(dictionary=True)
+          sql = "select pagos.norecibo as Nrecibo, pagos.noprest as Nprest,date_format(pagos.fecha,'%d-%m-%Y') as Fecha,format(sum((pagos.vpagint+pagos.vpagcap)),2) as Cuota, format(sum(pagos.vpagmora),2) as Mora, \
+          concat(prestamo.nombres,' ',prestamo.apellidos) as Nombres,format(sum(pagos.descinte),2) as Descuento,pagos.norecibo as id from pagos inner join prestamo on prestamo.noprest = pagos.noprest \
+           group by pagos.norecibo limit 30"
+ 
+          mycursor.execute(sql)
+          data = mycursor.fetchall()
+
+          if mycursor.rowcount == 0:
+              aerror = True
+              error = "No hay datos seleccionados"  
+    except Exception as e:
+          print(e)
+          aerror = True
+          error = "Problemas para conectar la tabla "+str(e)        
+       
+    if aerror == True:
+       res = make_response(jsonify({"Error": error}),400)
+       return res; 
+    if aerror == False:
+       res = make_response(jsonify({"data":data}),200)
+       return res; 
+            

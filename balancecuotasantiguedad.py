@@ -76,4 +76,3 @@ def balancecuotasantiguedad():
     if aerror == False:
        res = make_response(jsonify({"data":datafinal}),200)
        return res; 
-      

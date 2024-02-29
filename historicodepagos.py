@@ -62,4 +62,44 @@ def historicodepagos():
     if aerror == False:
        res = make_response(jsonify({"data":data}),200)
        return res; 
-      
+
+@historicodepagos_api.route("/api/historicodepagosgeneral",methods=['POST','GET'])
+def historicodepagosgeneral():
+    
+    aerror = False
+    salida = {}
+    row = request.get_json()
+    print(row)
+    try:
+       ###validar campos de entrada
+
+       aerror = False
+
+       if aerror == False:
+          
+          conectar = conectUserDatabase(row['parent'])
+          mycursor = conectar.cursor(dictionary=True)
+          sql = "select norecibo as Nrecibo, noprest as Nprest,date_format(fecha,'%d-%m-%Y') as Fecha,format(sum((vpagint+vpagcap)),2) as Cuota, format(sum(vpagmora),2) as Mora, \
+          format(sum(descinte),2) as Descuento,norecibo as id from pagos \
+          group by norecibo limit 30"
+
+          
+          mycursor.execute(sql)
+          data = mycursor.fetchall()
+
+          if mycursor.rowcount == 0:
+             aerror = True
+             error = "No hay datos para recuperar" 
+          
+    except Exception as e:
+          print(e)
+          aerror = True
+          error = "Problemas para conectar la tabla "+str(e)        
+       
+    if aerror == True:
+       res = make_response(jsonify({"Error": error}),400)
+       return res; 
+    if aerror == False:
+       res = make_response(jsonify({"data":data}),200)
+       return res; 
+            
