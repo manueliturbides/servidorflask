@@ -42,7 +42,7 @@ from dashboard import dashboard_api
 
 import configuracionservidor 
 
-application = Flask(__name__,static_folder='build',template_folder='build')
+application = Flask(__name__,static_url_path='',static_folder='build',template_folder='build')
 
 application.config['MYSQL_USER'] = configuracionservidor.puser
 application.config['MYSQL_DATABASE'] = configuracionservidor.pdatabase
