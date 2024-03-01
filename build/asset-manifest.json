@@ -1,0 +1,21 @@
+{
+  "files": {
+    "main.css": "/static/css/main.6e86bd79.css",
+    "main.js": "/static/js/main.42ae10ce.js",
+    "static/js/905.6c54fa7e.chunk.js": "/static/js/905.6c54fa7e.chunk.js",
+    "static/js/313.82ca2d6b.chunk.js": "/static/js/313.82ca2d6b.chunk.js",
+    "static/js/249.260c2646.chunk.js": "/static/js/249.260c2646.chunk.js",
+    "static/media/bg-sign-in-basic.jpeg": "/static/media/bg-sign-in-basic.f327db1d0e4b00ba3c81.jpeg",
+    "static/media/mockup.jpg": "/static/media/mockup.48e86def26fb1fdd5484.jpg",
+    "static/media/Illustration1.png": "/static/media/Illustration1.6bd7bb5ce248a3a483ab.png",
+    "static/media/Illustration2.png": "/static/media/Illustration2.179a7694198293fce036.png",
+    "static/media/tarjetascredito.jpg": "/static/media/tarjetascredito.06f147fa0bbedeb98bca.jpg",
+    "static/media/logo.png": "/static/media/logo.17d9bc0637ffa044d6d0.png",
+    "index.html": "/index.html",
+    "static/media/checklist.svg": "/static/media/checklist.ea63544a1c98920de664729b86390acc.svg"
+  },
+  "entrypoints": [
+    "static/css/main.6e86bd79.css",
+    "static/js/main.42ae10ce.js"
+  ]
+}

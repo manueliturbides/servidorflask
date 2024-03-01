@@ -56,7 +56,7 @@ def dashboardmain():
           else:
              valorpagosdelmes = 0.0 
           
-          sql = "select format(sum(deudatotal),2) as prestamodelmes from solicit where month(fecha_crea) = month(now()) and aprobado = 'S'"
+          sql = "select format(sum(deudatotal),2) as prestamodelmes from solicit where aprobado = 'S' and month(fecha_crea) = month(now())"
           mycursor.execute(sql)
           prestamodelmes = mycursor.fetchall()
           if mycursor.rowcount != 0:
@@ -65,7 +65,7 @@ def dashboardmain():
              valorprestamodelmes = 0.0 
           
 
-          sql = "select format(sum(deudatotal),2) as aprobadosdelmes from solicit where month(fecha_crea) = month(now()) and aprobado = 'S'"
+          sql = "select format(sum(deudatotal),2) as aprobadosdelmes from solicit where aprobado = 'S' and month(fecha_crea) = month(now())  "
           mycursor.execute(sql)
           aprobadosdelmes = mycursor.fetchall()
           if mycursor.rowcount != 0:
@@ -73,10 +73,43 @@ def dashboardmain():
           else:
              valoraprobadosdelmes = 0.0 
           
+          sql = "select sum(solicit.financiamiento) as monto,monthname(solicit.fecha_crea) as mes from solicit group by month(fecha_crea)"
+          mycursor.execute(sql)
+          grafico = mycursor.fetchall()
+        
+          datasol = []
+          listasol = []
+          for x in grafico:
+              datasol.append(x['monto'])
+              listasol.append(x['mes']) 
+          
+          sql = "select sum(solicit.deudatotal) as monto,monthname(solicit.fecha_crea) as mes from solicit where aprobado = 'S' group by month(fecha_crea) "
+          mycursor.execute(sql)
+          grafico = mycursor.fetchall()
 
+          datapre = []
+          listapre = []
+          for x in grafico:
+              datapre.append(x['monto'])
+              listapre.append(x['mes']) 
+          
+          sql = "select sum(pagos.cuota) as monto,monthname(pagos.fecha) as mes from pagos group by month(fecha)"
+          mycursor.execute(sql)
+          grafico = mycursor.fetchall()
+
+          datapag = []
+          listapag = []
+          for x in grafico:
+              datapag.append(x['monto'])
+              listapag.append(x['mes']) 
+            
 
           data = {"solicituddelmes": valorsolicitudnueva,"pagosdelmes": valorpagosdelmes,"prestamodelmes": valorprestamodelmes,"aprobadosdelmes": valoraprobadosdelmes}          
-          print(data)
+          datasolicitud = {"datasol": datasol, "listasol": listasol}
+          dataprestamos = {"datapre": datapre, "listapre": listapre}
+          datapagos = {"datapag": datapag, "listapag": listapag}
+          print(datasolicitud)
+          
     except Exception as e:
           print(e)
           aerror = True
@@ -86,5 +119,7 @@ def dashboardmain():
        res = make_response(jsonify({"Error": error}),400)
        return res; 
     if aerror == False:
-       res = make_response(jsonify({"data":data}),200)
+       res = make_response(jsonify({"data":data,"datasolicitud": datasolicitud, "dataprestamos":dataprestamos,"datapagos":datapagos}),200)
+       #res = make_response(jsonify({"data":data,"datasolicitud": datasolicitud}),200)
+       
        return res; 
