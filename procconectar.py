@@ -15,14 +15,14 @@ def conectUserDatabase(nombre):
     
     try:
        #crear base de datos
-       #mydb = mysql.connector.connect(host="general.c78ou26kqg7e.us-east-1.rds.amazonaws.com",user="root",password="00100267590",port = 3306)
-       mydb = mysql.connector.connect(host="127.0.0.1",user="miturbides",password="00100267590",port = 3306)
+       mydb = mysql.connector.connect(host="general.c78ou26kqg7e.us-east-1.rds.amazonaws.com",user="root",password="00100267590",port = 3306)
+#       mydb = mysql.connector.connect(host="127.0.0.1",user="miturbides",password="00100267590",port = 3306)
        
        mycursor = mydb.cursor()
        mycursor.execute("create database if not exists "+nombre)
        
-       #mydb=mysql.connector.connect(host="general.c78ou26kqg7e.us-east-1.rds.amazonaws.com",user="root",password="00100267590",port = 3306,database=nombre)
-       mydb=mysql.connector.connect(host="127.0.0.1",user="miturbides",password="00100267590",port = 3306,database=nombre)
+       mydb=mysql.connector.connect(host="general.c78ou26kqg7e.us-east-1.rds.amazonaws.com",user="root",password="00100267590",port = 3306,database=nombre)
+       #mydb=mysql.connector.connect(host="127.0.0.1",user="miturbides",password="00100267590",port = 3306,database=nombre)
        mycursor = mydb.cursor(dictionary=True)
  
        mycursor.execute("Create table if not exists company(nombre varchar(255),direccion varchar(255),logo MEDIUMBLOB,telefono varchar(255),pais varchar(255));")
