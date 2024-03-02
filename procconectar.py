@@ -19,8 +19,10 @@ def conectUserDatabase(nombre):
 #       mydb = mysql.connector.connect(host="127.0.0.1",user="miturbides",password="00100267590",port = 3306)
        
        mycursor = mydb.cursor()
-       mycursor.execute("create database if not exists "+nombre)
+       db_query = f'CREATE DATABASE IF NOT EXISTS`{nombre}`'
+       mycursor.execute(db_query)
        
+
        mydb=mysql.connector.connect(host="general.c78ou26kqg7e.us-east-1.rds.amazonaws.com",user="root",password="00100267590",port = 3306,database=nombre)
        #mydb=mysql.connector.connect(host="127.0.0.1",user="miturbides",password="00100267590",port = 3306,database=nombre)
        mycursor = mydb.cursor(dictionary=True)
@@ -55,11 +57,13 @@ def conectUserDatabase(nombre):
          nocuota int,cuota float,mora float,fecha date,vpagint float,vpagmora float,vpagcap float,descinte float,fecha1 date,\
          descmora float,sucursal varchar(15),user varchar(100),fecha_crea date, \
          balance float,fecha_mod date,timestamp datetime,PRIMARY KEY(norecibo))")
+
        
        return(mydb)
     except Exception as e:
-      print(e)
-      return(e)
+      print(str(e)+" kdkdk")
+
+  #    return(e)
 
 
 def conectUserDatabaseVendedor(nombre):    
