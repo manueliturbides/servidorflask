@@ -111,6 +111,7 @@ def aprobacionprestamos():
                 fechacuota = fechacuota + timedelta(days = 1)
              if data[0]['formapago'] == "Mensual": 
                 fechacuota = fechacuota + timedelta(days = 28)
+                
                            
                 diacuota = fechacuota.day
                 
