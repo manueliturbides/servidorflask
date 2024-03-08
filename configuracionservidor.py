@@ -18,6 +18,7 @@
 puser = 'root'
 pdatabase = 'general'
 phost = 'general.c78ou26kqg7e.us-east-1.rds.amazonaws.com'
+#phost = '127.0.0.1'
 ppassword = '00100267590'
 passwordhost = '00100267590'
 
