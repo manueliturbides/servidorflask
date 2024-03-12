@@ -42,14 +42,13 @@ def balanceprestamoscliente():
           sql = "select prestamo.noprest as Nprest, concat(prestamo.nombres,' ',prestamo.apellidos) as Nombres,\
           format(solicit.financiamiento,2) as Solicitado,format((solicit.deudatotal-solicit.financiamiento),2) as InteresxCob, format(sum(prestamo.vpagint),2) as VpagInteres, \
           format(prestamo.vpagcap,2) as PagadoCap,format((solicit.financiamiento - prestamo.vpagcap),2) as BalanceCap,format((solicit.deudatotal-solicit.financiamiento-vpagint),2) as BalanceInt, \
-          format((solicit.deudatotal - prestamo.vpagint - prestamo.vpagcap),2) as Balance,solicit.id as id from prestamo \
+          format((solicit.deudatotal - prestamo.vpagint - prestamo.vpagcap),2) as Balance,@numero:=@numero+1 as id from prestamo \
           inner join solicit on prestamo.nosolic = solicit.id \
           where prestamo.status = 'A' "
           
           mycursor.execute(sql)
           data = mycursor.fetchall()
-          
-          if mycursor.rowcount != 0:
+          if mycursor.rowcount != 0 and data[0]['id'] != None:
              sql = "select sum(pagosres.vpagint) as monto,monthname(pagosres.fecha) as mes,month(pagosres.fecha) as mesnumero from pagosres group by month(pagosres.fecha) "
              mycursor.execute(sql)
              grafico = mycursor.fetchall()
