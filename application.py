@@ -114,17 +114,17 @@ def contactprosecom():
 
 
     msg = EmailMessage()
-    msg['Subject'] = 'Prosecom Contact'
+    msg['Subject'] = 'SuitOrbit Contact'
     msg['From'] = "support@prosecomsrl.com"
     msg['To'] = email
     msg.set_content('''
                     <!DOCTYPE html>
                       <html>
                         <body style="background-color: white; ">
-                            <p>Gracias por comunicarte con Prosecom</p> 
+                            <p>Gracias por comunicarte con SuitOrbit</p> 
                             <p>Le estaremos respondiendo proximamente. </p>
                             <br></br>
-                            <p>Administración Prosecom</p>
+                            <p>Administración SuitOrbit</p>
                     
 
                        </body>

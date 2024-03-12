@@ -10,6 +10,8 @@ from flask_mysql_connector import MySQL
 import configuracionservidor 
 import calendar
 from procconectar import conectUserDatabaseVendedor
+import smtplib
+from email.message import EmailMessage
 
 
 vendedoresbackend_api = Blueprint('vendedoresbackend_api',__name__)
@@ -287,9 +289,9 @@ def vendedoresbackend_registrar():
           mycursor = connectionUser.cursor()
           sql = "insert into user(id,nombre,email,password,promcode) values(%s,%s,%s,%s,%s)"
           val = (row["id"],row["email"].split("@")[0],row["email"],row["password"],row["promcode"])
-          print(val)
           mycursor.execute(sql,val)
           connectionUser.commit()
+
 
           sql = "insert into facturas(fecha,numSuscrip,retired) values(%s,%s,%s)"
           date = datetime.today()
@@ -317,6 +319,46 @@ def vendedoresbackend_registrar():
     if aerror == True:
        res = make_response(jsonify({"Error": error}),400)
        return res; 
+
+@vendedoresbackend_api.route("/api/vendedoresbackend_sendcode",methods=['POST','GET'])
+def registerbackend_sendcode():
+    
+    row = request.get_json()
+        
+    email = row["email"]
+    code = row["code"]
+    print(code)
+
+    msg = EmailMessage()
+    msg['Subject'] = 'SuitOrbit Contacto'
+    msg['From'] = "support@prosecomsrl.com"
+    msg['To'] = email
+    msg.set_content('''
+                    <!DOCTYPE html>
+                      <html>
+                        <body style="background-color: white; ">
+                            <p>Gracias por registrarte como vendedor en SuitOrbit</p> 
+                            <p>Su código de registro es: <strong>'''+str(code)+'''</strong> </p>
+                            <br></br>
+                            <p>Administración SuitOrbit</p>
+                    
+
+                       </body>
+                      </html>''', subtype='html')
+
+    try:
+      server = smtplib.SMTP_SSL('smtp.mail.us-east-1.awsapps.com', 465)
+      server.ehlo()
+      server.login('support@prosecomsrl.com', 'mr@00100267590')
+      text = msg.as_string()
+      server.sendmail("support@prosecomsrl.com", email, text)
+      print('Email sent to %s' "email_recipient")
+    except Exception as e:
+      print(e)
+      print("SMTP server connection error")
+
+    return str(code)
+
 
 @vendedoresbackend_api.route("/api/vendedoresbackend_login",methods=['POST','GET'])
 def vendedoresbackend_login():

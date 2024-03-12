@@ -268,7 +268,6 @@ def loginbackend_login():
       
           mycursor.execute(sql)
           miuser = mycursor.fetchall()
-      
           if mycursor.rowcount != 0:
              connectionUser = conectUserDatabase(miuser[0]["parent"])
              mycursor = connectionUser.cursor(dictionary=True)       
