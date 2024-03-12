@@ -42,7 +42,7 @@ def balanceprestamoscliente():
           sql = "select prestamo.noprest as Nprest, concat(prestamo.nombres,' ',prestamo.apellidos) as Nombres,\
           format(solicit.financiamiento,2) as Solicitado,format((solicit.deudatotal-solicit.financiamiento),2) as InteresxCob, format(sum(prestamo.vpagint),2) as VpagInteres, \
           format(prestamo.vpagcap,2) as PagadoCap,format((solicit.financiamiento - prestamo.vpagcap),2) as BalanceCap,format((solicit.deudatotal-solicit.financiamiento-vpagint),2) as BalanceInt, \
-          format((solicit.deudatotal - prestamo.vpagint - prestamo.vpagcap),2) as Balance,prestamo.noprest as id from prestamo \
+          format((solicit.deudatotal - prestamo.vpagint - prestamo.vpagcap),2) as Balance,solicit.id as id from prestamo \
           inner join solicit on prestamo.nosolic = solicit.id \
           where prestamo.status = 'A' "
           
