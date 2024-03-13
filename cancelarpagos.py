@@ -128,7 +128,7 @@ def cancelarpagopornumeroderecibo():
 
           mycursor = conectar.cursor()
           sql = " update prestamos set vpagint = "+"'"+str(misdatos[0]['vpagint'])+"', vpagmora = "+"'"+str(misdatos[0]['vpagmora'])+"'\
-          ,vpagcap = "+"'"+str(misdatos[0]['vpagcap'])+"' status = if(solicitado > vpagint+vpagcap, 'A','C') where noprest = "+"'"+str(row['noprest'])+"'"
+          ,vpagcap = "+"'"+str(misdatos[0]['vpagcap'])+"', status = if(solicitado > vpagint+vpagcap, 'A','C') where noprest = "+"'"+str(row['noprest'])+"'"
           mycursor.execute(sql)
 
           sql = "update pagosres set cuota = 0, mora = 0, vpagint = 0, vpagmora = 0, vpagcap = 0, descinte = 0 where norecibo = "+"'"+str(row['norecibo'])+"'"
