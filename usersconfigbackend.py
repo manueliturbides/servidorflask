@@ -150,8 +150,8 @@ def usersconfigbackend_deleteuser():
 def usersconfigbackend_updatecompanylogo():    
     aerror = False
     error = {}
-#    imagefile = request.files['image']
-    bin_file = request.form['image']
+    imagefile = request.files['image']
+    bin_file = imagefile.read()
     
     if aerror == False:
        try:
