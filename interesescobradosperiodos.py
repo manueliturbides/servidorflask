@@ -60,7 +60,6 @@ def interesescobradosperiodos():
              listames = []
              listamesnumero = []
              for x in grafico:
-                 print("manuel")
                  listavalor.append(str(x['monto']))
                  listames.append(x['mes'])
                  listamesnumero.append(x['mesnumero']) 
@@ -112,7 +111,6 @@ def interesescobradosperiodosgeneral():
              listames = []
              listamesnumero = []
              for x in grafico:
-                 print("manuel")
                  listavalor.append(str(x['monto']))
                  listames.append(x['mes'])
                  listamesnumero.append(x['mesnumero']) 
