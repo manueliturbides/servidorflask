@@ -134,7 +134,7 @@ def cancelarpagopornumeroderecibo():
           sql = "update pagosres set cuota = 0, mora = 0, vpagint = 0, vpagmora = 0, vpagcap = 0, descinte = 0 where norecibo = "+"'"+str(row['norecibo'])+"'"
           mycursor.execute(sql)
           
-          sql = "update pagos set cuota = 0, mora  = 0, vpagint = 0, vpagmora = 0, vpagcap = 0, descinte = 0 from pagos where norecibo = "+"'"+str(row['norecibo'])+"'"
+          sql = "update pagos set cuota = 0, mora  = 0, vpagint = 0, vpagmora = 0, vpagcap = 0, descinte = 0  where norecibo = "+"'"+str(row['norecibo'])+"'"
           mycursor.execute(sql)
           
           
