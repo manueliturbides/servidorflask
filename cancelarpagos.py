@@ -151,7 +151,7 @@ def cancelarpagopornumeroderecibo():
               mycursor = conectar.cursor()
               sql = " update amort set vpagint = vpagint - "+"'"+str(misdatosamort[0]['vpagint'])+"', vpagmora = vpagmora - "+"'"+str(misdatosamort[0]['vpagmora'])+"'\
              ,vpagcap = vpagcap - "+"'"+str(misdatosamort[0]['vpagcap'])+"', status = if(cuota > vpagint+vpagcap, 'A','P') where noprest = "+"'"+str(row['noprest'])+"'\
-              and nocuota = "+"'"+x['nocuota']+"'" 
+               and nocuota = "+"'"+str(x['nocuota'])+"'" 
               mycursor.execute(sql)
      
           conectar.commit()
