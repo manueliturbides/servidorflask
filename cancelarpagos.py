@@ -143,7 +143,7 @@ def cancelarpagopornumeroderecibo():
           misdatos = mycursor.fetchall()
           
           mycursor = conectar.cursor(dictionary=True)
-          sql = "select vpagint,vpagmora,vpagcap from pagos where norecibo = "+"'"+str(row['norecibo'])+"'"
+          sql = "select vpagint,vpagmora,vpagcap,nocuota,norecibo from pagos where norecibo = "+"'"+str(row['norecibo'])+"'"
           mycursor.execute(sql)
           misdatosamort = mycursor.fetchall()
            
