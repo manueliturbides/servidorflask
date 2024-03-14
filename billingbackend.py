@@ -28,11 +28,10 @@ app.config['MYSQL_DATABASE'] = configuracionservidor.pdatabase
 app.config['MYSQL_HOST'] = configuracionservidor.phost
 app.config['MYSQL_PASSWORD'] = configuracionservidor.ppassword
 
-PAYPAL_CLIENT_ID = "Ac7Xe72157GerO-EfF2GpQuklSR2aQLIU66y3debvQZQMXXAMaHu69VFMwgn_a6db4zd1ud8-lSjnjc1"
-PAYPAL_CLIENT_SECRET = "EFpvcnm5Z6-9CDXBNJ9d9AwGqiYStObWrmD2JVLMy9JDP86rROjqhtbtWXCE4POdCOIgKu4Kp9jHfd_C"
-PLAN_ID = "P-8LJ579675P663525BMWZFF5Y"
+PAYPAL_CLIENT_ID = "AYUCA7RFCiCrOwfYWhdWZBlC6hVTWWK4Bdr-oxjlhdeo6rKhPv3zMPMg3NsYm1_UiV3MN1uXIS_ySQKs"
+PAYPAL_CLIENT_SECRET = "EOw6mWFFthUAiUKtwGyD5ZZ_XE4j-rMylXGqK3b3XLyqdpNQsWRoG8yOLWt5lQ_S2NG8Cw0iQqnynGBa"
 
-base = "https://api-m.sandbox.paypal.com"
+base = "https://api-m.paypal.com"
 
 CORS(app,origins="http://localhost:3000")
 mysql = MySQL(app)

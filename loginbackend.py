@@ -87,7 +87,7 @@ def registerbackend_sendcode():
 
     msg = EmailMessage()
     msg['Subject'] = 'PrestaQuiK Contacto'
-    msg['From'] = "support@prosecomsrl.com"
+    msg['From'] = "support@suitorbit.com"
     msg['To'] = email
     msg.set_content('''
                     <!DOCTYPE html>
@@ -105,9 +105,9 @@ def registerbackend_sendcode():
     try:
       server = smtplib.SMTP_SSL('smtp.mail.us-east-1.awsapps.com', 465)
       server.ehlo()
-      server.login('support@prosecomsrl.com', 'mr@00100267590')
+      server.login('support@suitorbit.com', 'mr@00100267590')
       text = msg.as_string()
-      server.sendmail("support@prosecomsrl.com", email, text)
+      server.sendmail("support@suitorbit.com", email, text)
       print('Email sent to %s' "email_recipient")
     except Exception as e:
       print(e)

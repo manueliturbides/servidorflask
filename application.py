@@ -115,7 +115,7 @@ def contactprosecom():
 
     msg = EmailMessage()
     msg['Subject'] = 'SuitOrbit Contact'
-    msg['From'] = "support@prosecomsrl.com"
+    msg['From'] = "support@suitorbit.com"
     msg['To'] = email
     msg.set_content('''
                     <!DOCTYPE html>
@@ -133,9 +133,10 @@ def contactprosecom():
     try:
       server = smtplib.SMTP_SSL('smtp.mail.us-east-1.awsapps.com', 465)
       server.ehlo()
-      server.login('support@prosecomsrl.com', 'mr@00100267590')
+      server.login('support', 'Mr00100267590')
       text = msg.as_string()
-      server.sendmail("support@prosecomsrl.com", email, text)
+      server.sendmail("support@suitorbit.com", email, text)
+      server.quit()
       print('Email sent to %s' "email_recipient")
     except Exception as e:
       print(e)
@@ -143,9 +144,9 @@ def contactprosecom():
 
 
     msg = EmailMessage()
-    msg['Subject'] = 'Prosecom Contact'
-    msg['From'] = "support@prosecomsrl.com"
-    msg['To'] = "support@prosecomsrl.com"
+    msg['Subject'] = 'SuitOrbit Contact'
+    msg['From'] = "support@suitorbit.com"
+    msg['To'] = "support@suitorbit.com"
     msg.set_content('''
                     <!DOCTYPE html>
                       <html>
@@ -158,9 +159,10 @@ def contactprosecom():
     try:
       server = smtplib.SMTP_SSL('smtp.mail.us-east-1.awsapps.com', 465)
       server.ehlo()
-      server.login('support@prosecomsrl.com', 'mr@00100267590')
+      server.login('support', 'Mr00100267590')
       text = msg.as_string()
-      server.sendmail("support@prosecomsrl.com", "support@prosecomsrl.com", text)
+      server.sendmail("support@suitborbit.com", "support@suitorbit.com", text)
+      server.quit()
       print('Email sent to %s' "email_recipient")
     except Exception as e:
       print(e)
