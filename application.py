@@ -85,7 +85,7 @@ def servirpaginaestatica():
 
 @application.errorhandler(404)
 def not_found(e):
-    return "render_template('index.html')"
+    return render_template('index.html')
 
 @application.route('/geocode',methods=['POST','GET'])
 def geocode():

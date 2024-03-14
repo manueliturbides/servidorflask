@@ -29,7 +29,6 @@ def consultarpagos():
     aerror = False
     salida = {}
     row = request.get_json()
-    print(row)
     try:
        ###validar campos de entrada
 
@@ -45,13 +44,12 @@ def consultarpagos():
           inner join prestamo on pagosres.noprest = prestamo.noprest \
           where pagosres.fecha between "+"'"+str(row['fechadesde'])+"' and"+"'"+str(row['fechahasta'])+"'"
           
-          print(sql)
           mycursor.execute(sql)
           data = mycursor.fetchall()
           
           
           conectar.close() 
-          print(data) 
+           
     except Exception as e:
           print(e)
           aerror = True
@@ -70,7 +68,6 @@ def consultarpagosacancelar():
     aerror = False
     salida = {}
     row = request.get_json()
-    print(row)
     try:
        ###validar campos de entrada
 
@@ -86,14 +83,12 @@ def consultarpagosacancelar():
           inner join prestamo on pagosres.noprest = prestamo.noprest \
           where prestamo.noprest = "+"'"+row['noprest']+"'"+" and pagosres.fecha between "+"'"+str(row['fechadesde'])+"' and"+"'"+str(row['fechahasta'])+"' order by pagosres.norecibo desc"
           
-          print(sql)
           mycursor.execute(sql)
           data = mycursor.fetchall()
           
           
-          
           conectar.close() 
-          print(data) 
+           
     except Exception as e:
           print(e)
           aerror = True
@@ -113,7 +108,6 @@ def cancelarpagopornumeroderecibo():
     aerror = False
     salida = {}
     row = request.get_json()
-    print(row)
     try:
        ###validar campos de entrada
 
@@ -123,13 +117,36 @@ def cancelarpagopornumeroderecibo():
           
           conectar = conectUserDatabase(row['parent'])
           mycursor = conectar.cursor(dictionary=True)
-          sql = "delete from pagosres where norecibo = "+"'"+str(row['norecibo'])+"'"
+          sql = "select vpagint,vpagmora,vpagcap from pagosres where norecibo = "+"'"+str(row['norecibo'])+"'"
+          mycursor.execute(sql)
+          misdatos = mycursor.fetchall()
+          
+          mycursor = conectar.cursor()
+          sql = " update prestamo set vpagint = vpagint - "+"'"+str(misdatos[0]['vpagint'])+"', vpagmora = vpagmora - "+"'"+str(misdatos[0]['vpagmora'])+"'\
+          ,vpagcap = vpagcap - "+"'"+str(misdatos[0]['vpagcap'])+"', status = if(solicitado > vpagint+vpagcap, 'A','C') where noprest = "+"'"+str(row['noprest'])+"'"
+          mycursor.execute(sql)
+
+          mycursor = conectar.cursor(dictionary=True)
+          sql = "select vpagint,vpagmora,vpagcap,nocuota,norecibo from pagos where norecibo = "+"'"+str(row['norecibo'])+"'"
+          mycursor.execute(sql)
+          misdatosamort = mycursor.fetchall()
+           
+          for x in misdatosamort:
+              print(x)
+              mycursor = conectar.cursor()
+              sql = " update amort set vpagint = vpagint - "+"'"+str(x['vpagint'])+"', vpagmora = vpagmora - "+"'"+str(x['vpagmora'])+"'\
+             ,vpagcap = vpagcap - "+"'"+str(x['vpagcap'])+"', status = if(cuota > vpagint+vpagcap, 'A','P') where noprest = "+"'"+str(row['noprest'])+"'\
+               and nocuota = "+"'"+str(x['nocuota'])+"'" 
+              mycursor.execute(sql)
+          
+          
+          sql = "update pagosres set cuota = 0, mora = 0, vpagint = 0, vpagmora = 0, vpagcap = 0, descinte = 0 where norecibo = "+"'"+str(row['norecibo'])+"'"
           mycursor.execute(sql)
           
-          sql = "delete from pagos where norecibo = "+"'"+str(row['norecibo'])+"'"
+          sql = "update pagos set cuota = 0, mora  = 0, vpagint = 0, vpagmora = 0, vpagcap = 0, descinte = 0  where norecibo = "+"'"+str(row['norecibo'])+"'"
           mycursor.execute(sql)
           
-          
+                    
           conectar.commit()
           conectar.close() 
           
