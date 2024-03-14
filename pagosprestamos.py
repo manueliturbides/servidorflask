@@ -30,7 +30,6 @@ def recuperartablaamortizacion():
     salida = {}
     row = request.get_json()
    
-    print(row)
     try:
        ###validar campos de entrada
 
@@ -41,12 +40,12 @@ def recuperartablaamortizacion():
           conectar = conectUserDatabase(row['parent'])
           mycursor = conectar.cursor(dictionary=True)
           sql = "select amort.nocuota as Cuota,date_format(amort.fecha,'%d-%m-%Y') as Fecha,concat(prestamo.nombres,' ',prestamo.apellidos) as Nombres,\
-              format(amort.capital+amort.interes-amort.vpagcap-amort.vpagint,2) as Valor, \
+              format(amort.capital+amort.interes-amort.vpagcap-amort.vpagint-amort.descuento,2) as Valor, \
               if(datediff("+"'"+str(datetime.now().date())+"'"+",amort.fecha) > 3,\
               ((solicit.valorcuotas*(solicit.mora/100))/30)*(datediff("+"'"+str(datetime.now().date())+"'"+",amort.fecha)),'0.00') as Mora,\
               '0.00' as Pagado,'0.00' as PagMora, 0.0 as Balance, \
               (amort.interes-amort.vpagint) as sinteres,(amort.capital-amort.vpagcap) as scapital,amort.noprest as Snoprest,\
-              solicit.id as id \
+              solicit.id as id,format(amort.descuento,2) as descuento \
               from amort \
               inner join prestamo on amort.noprest = prestamo.noprest \
               inner join solicit on amort.nosolic = solicit.id \
@@ -54,7 +53,8 @@ def recuperartablaamortizacion():
            
           mycursor.execute(sql)
           data = mycursor.fetchall()
-          
+          print(data) 
+
           #extracion de datos de prestamos generales
           sql = "select count(cedula) as cedula  from prestamo \
           where prestamo.cedula = "+"'"+str(row['noprest'].split("/")[2])+"' and prestamo.status = 'A'"
@@ -72,7 +72,6 @@ def recuperartablaamortizacion():
           mycursor.execute(sql) 
           dataprestamo = mycursor.fetchall()
           
-          print(dataprestamo)
     except Exception as e:
           print(e)
           aerror = True
@@ -145,18 +144,19 @@ def guardardatospagos():
        conectar = conectUserDatabase(row['parent'])
           
        for x in row['datospago']:
-          
+
           noprest = x['Snoprest']
           mycursor = conectar.cursor()
-      
-          if (float(x['Pagado']) <= float(x['Sinteres'])):
+        
+          if float(x['Pagado']) <= (float(x['Sinteres'])-float(x['descuento'].replace(",",""))):
              vinterespagado = float(x['Pagado'])
              tvinterespagado = tvinterespagado + vinterespagado
              vcapitalpagado = 0
           else:
-             vinterespagado = float(x['Sinteres'])
+             
+             vinterespagado = float(x['Sinteres'])-float(x['descuento'].replace(",",""))
              tvinterespagado = tvinterespagado + vinterespagado
-             vcapitalpagado = float(x['Pagado']) - float(x['Sinteres'])     
+             vcapitalpagado = float(x['Pagado']) - ((float(x['Sinteres'])) - float(x['descuento'].replace(",","")))     
              tvcapitalpagado = tvcapitalpagado + vcapitalpagado
    
           tmorapagado = tmorapagado + float(x['Mora'])
@@ -164,15 +164,14 @@ def guardardatospagos():
           sql = "update amort set vpagcap = vpagcap + "+"'"+str(vcapitalpagado)+"',"+\
           "vpagint = vpagint + "+"'"+str(vinterespagado)+"',"+\
           "vpagmora = vpagmora + "+"'"+str(x['Mora'])+"',"+\
-          " status = if(amort.capital+amort.interes-amort.vpagcap-amort.vpagint = 0,'P',''), "+\
+          " status = if(amort.capital+amort.interes-amort.vpagcap-amort.vpagint-amort.descuento = 0,'P',''), "+\
           " pagadodescuento = if(amort.descuento <> 0,'S','N') "+\
           " where noprest = "+"'"+str(x['Snoprest'])+"'"+\
           " and nocuota = "+"'"+str(x['Cuota'])+"'"
           mycursor.execute(sql)
 
-          print(vinterespagado)
           sql = "update prestamo set vpagcap = vpagcap + "+"'"+str(vcapitalpagado)+"',"+\
-          "vpagint = vpagint + "+"'"+str(vinterespagado)+"',"+\
+          "vpagint = vpagint + "+"'"+str(vinterespagado+float(x['descuento'].replace(",","")))+"',"+\
           "vpagmora = vpagmora + "+"'"+str(x['Mora'])+"',"+\
           " status = if(prestamo.solicitado-prestamo.vpagcap = 0,'P','A'), "+\
           " fultpago = "+"'"+str(datetime.now().date())+"',"+\
@@ -197,12 +196,12 @@ def guardardatospagos():
        
        for x in row['datospago']:
           
-          if (float(x['Pagado']) <= float(x['Sinteres'])):
+          if (float(x['Pagado']) <= float(x['Sinteres'])) - float(x['descuento'].replace(",","")):
              vinterespagado = float(x['Pagado'])
              vcapitalpagado = 0
           else:
              vinterespagado = float(x['Sinteres'])
-             vcapitalpagado = float(x['Pagado']) - float(x['Sinteres'])     
+             vcapitalpagado = float(x['Pagado']) - float(x['Sinteres']) - float(x['descuento'].replace(",",""))     
              
           
           if float(x['Pagado']) != 0:

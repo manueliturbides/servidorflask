@@ -77,7 +77,7 @@ def procesardescuento():
           
           conectar = conectUserDatabase(row['parent'])
           mycursor = conectar.cursor(dictionary=True)
-          sql = "select nocuota as Nocuota,format((interes-vpagint),2) as descuento from amort \
+          sql = "select nocuota as Nocuota,format(ifnull((interes-vpagint),0),2) as descuento from amort \
           where status <> 'P' and noprest = "+"'"+str(row['noprest'])+"' and nocuota \
           between "+"'"+str(row['cuotadesde'])+"'"+" and "+"'"+str(row['cuotahasta'])+"'"
           mycursor.execute(sql)
@@ -118,7 +118,8 @@ def guardardescuento():
           mycursor = conectar.cursor(dictionary=True)
           
           for x in row['dataresultados']:
-             sql = "update amort set descuento = "+"'"+str(float(x['Descuento']))+"'"+\
+             
+             sql = "update amort set descuento = "+"'"+(str(x['Descuento'])).replace(",","")+"'"+\
              " where noprest = "+"'"+str(row['noprest'])+"'"+" and nocuota = "+"'"+str(x['Nocuota'])+"'"    
              mycursor.execute(sql)
           
