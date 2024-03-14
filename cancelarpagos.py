@@ -81,7 +81,7 @@ def consultarpagosacancelar():
           prestamo.nombres as Nombres,format((pagosres.vpagint+pagosres.vpagcap+pagosres.vpagmora),2) as Cuota, format(pagosres.vpagmora,2) as Mora,\
           pagosres.norecibo as id from pagosres \
           inner join prestamo on pagosres.noprest = prestamo.noprest \
-          where prestamo.noprest = "+"'"+row['noprest']+"'"+" and pagosres.fecha between "+"'"+str(row['fechadesde'])+"' and"+"'"+str(row['fechahasta'])+"' order by pagosres.norecibo desc"
+          where prestamo.noprest = "+"'"+row['noprest']+"'"+" and pagosres.fecha between "+"'"+str(row['fechadesde'])+"' and"+"'"+str(row['fechahasta'])+"' and pagosres.cuota <> 0 order by pagosres.norecibo desc"
           
           mycursor.execute(sql)
           data = mycursor.fetchall()
