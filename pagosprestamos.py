@@ -144,7 +144,7 @@ def guardardatospagos():
        conectar = conectUserDatabase(row['parent'])
           
        for x in row['datospago']:
-
+          print(x['Pagado'])
           noprest = x['Snoprest']
           mycursor = conectar.cursor()
         
@@ -201,7 +201,6 @@ def guardardatospagos():
        sql = "select last_insert_id() "
        mycursor.execute(sql)
        lastid = mycursor.fetchall()
-       print(lastid)
        
        for x in row['datospago']:
           
