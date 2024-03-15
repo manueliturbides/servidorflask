@@ -46,7 +46,7 @@ def recuperartablaamortizacion():
               ((solicit.valorcuotas*(solicit.mora/100))/30)*(datediff("+"'"+str(datetime.now().date())+"'"+",amort.fecha)),'0.00') as Mora,\
               '0.00' as Pagado,'0.00' as PagMora, 0.0 as Balance, \
               (amort.interes-amort.vpagint) as sinteres,(amort.capital-amort.vpagcap) as scapital,amort.noprest as Snoprest,\
-              solicit.id as id,pagadodescuento \
+              solicit.id as id,pagadodescuento,format(descuento,2) as descuento \
               from amort \
               inner join prestamo on amort.noprest = prestamo.noprest \
               inner join solicit on amort.nosolic = solicit.id \
@@ -54,6 +54,7 @@ def recuperartablaamortizacion():
            
           mycursor.execute(sql)
           data = mycursor.fetchall()
+
           
           #extracion de datos de prestamos generales
           sql = "select count(cedula) as cedula  from prestamo \
@@ -72,7 +73,7 @@ def recuperartablaamortizacion():
           mycursor.execute(sql) 
           dataprestamo = mycursor.fetchall()
           
-          print(dataprestamo)
+          print(data)
     except Exception as e:
           print(e)
           aerror = True

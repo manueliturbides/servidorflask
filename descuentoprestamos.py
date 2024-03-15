@@ -83,7 +83,7 @@ def procesardescuento():
           mycursor.execute(sql)
           data = mycursor.fetchall()
 
-
+          print(data)
 
           conectar.close() 
     except Exception as e:
