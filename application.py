@@ -132,17 +132,29 @@ def contactprosecom():
 
     try:
       server = smtplib.SMTP_SSL('smtp.mail.us-east-1.awsapps.com', 465)
+ #     server.ehlo()
+#      server.login('support', 'Mr00100267590')
+ #     text = msg.as_string()
+  #    server.sendmail("support@suitorbit.com", email, text)
+   #   server.quit()
+#      print('Email sent to %s' "email_recipient")
+    except Exception as e:
+      print(e)
+      print("SMTP server connection error sksk")
+
+
+    try:
+      server = smtplib.SMTP_SSL('smtp.mail.eu-west-1.awsapps.com', 465)
       server.ehlo()
-      server.login('support', 'Mr00100267590')
+      server.login("support", "Mr00100267590")
       text = msg.as_string()
-      server.sendmail("support@suitorbit.com", email, text)
+      server.sendmail("support@suitorbit.com", "manuelaiturbides@gmail.com", text)
+      print('Email sent to %s' % "manuelaiturbides@gmail.com")
       server.quit()
-      print('Email sent to %s' "email_recipient")
     except Exception as e:
       print(e)
       print("SMTP server connection error")
-
-
+    
     msg = EmailMessage()
     msg['Subject'] = 'SuitOrbit Contact'
     msg['From'] = "support@suitorbit.com"
@@ -158,12 +170,12 @@ def contactprosecom():
 
     try:
       server = smtplib.SMTP_SSL('smtp.mail.us-east-1.awsapps.com', 465)
-      server.ehlo()
-      server.login('support', 'Mr00100267590')
-      text = msg.as_string()
-      server.sendmail("support@suitborbit.com", "support@suitorbit.com", text)
-      server.quit()
-      print('Email sent to %s' "email_recipient")
+    #  server.ehlo()
+      #server.login('support', 'Mr00100267590')
+     # text = msg.as_string()
+     # server.sendmail("support@suitorbit.com", "support@suitorbit.com", text)
+     # server.quit()
+    #  print('Email sent to %s' "email_recipient")
     except Exception as e:
       print(e)
       print("SMTP server connection error")
