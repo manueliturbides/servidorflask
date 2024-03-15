@@ -171,8 +171,15 @@ def guardardatospagos():
              " and nocuota = "+"'"+str(x['Cuota'])+"'"
              mycursor.execute(sql)
 
+
+             if x['pagadodescuento'] == "S":
+                totaldescuento = 0
+             else:
+                totaldescuento = 0
+                totaldescuento = float(x['descuento'].replace(",","")) 
+
              sql = "update prestamo set vpagcap = vpagcap + "+"'"+str(vcapitalpagado)+"',"+\
-             "vpagint = vpagint + "+"'"+str(vinterespagado+float(x['descuento'].replace(",","")))+"',"+\
+             "vpagint = vpagint + "+"'"+str(vinterespagado+totaldescuento)+"',"+\
              "vpagmora = vpagmora + "+"'"+str(x['Mora'])+"',"+\
              " status = if(prestamo.solicitado-prestamo.vpagcap = 0,'P','A'), "+\
              " fultpago = "+"'"+str(datetime.now().date())+"',"+\
