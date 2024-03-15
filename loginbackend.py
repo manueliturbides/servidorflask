@@ -105,7 +105,7 @@ def registerbackend_sendcode():
     try:
       server = smtplib.SMTP_SSL('smtp.mail.us-east-1.awsapps.com', 465)
       server.ehlo()
-      server.login('support@suitorbit.com', 'mr@00100267590')
+      server.login('support@suitorbit.com', 'Mr00100267590')
       text = msg.as_string()
       server.sendmail("support@suitorbit.com", email, text)
       print('Email sent to %s' "email_recipient")
