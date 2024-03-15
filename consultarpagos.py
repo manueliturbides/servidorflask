@@ -44,7 +44,7 @@ def consultarpagos():
           concat(solicit.nombres,' ',solicit.apellidos) as Nombres,format((pagosres.vpagint+pagosres.vpagcap+vpagmora),2) as Cuota, format(pagosres.vpagmora,2) as Mora,\
           pagosres.norecibo as id from pagosres \
           inner join solicit on pagosres.nosolic = solicit.id \
-          where pagosres.fecha between "+"'"+str(row['fechadesde'])+"' and"+"'"+str(row['fechahasta'])+"' order by fecha desc"
+          where pagosres.fecha between "+"'"+str(row['fechadesde'])+"' and"+"'"+str(row['fechahasta'])+"' and pagosres.cuota <> 0 order by fecha desc"
           
           mycursor.execute(sql)
           data = mycursor.fetchall()
@@ -86,7 +86,7 @@ def consultarpagosgeneral():
           sql = "select pagosres.noprest as Noprest, pagosres.norecibo as Norecibo,date_format(pagosres.fecha,'%d-%m-%Y') as Fecha,\
           concat(solicit.nombres,' ',solicit.apellidos) as Nombres,format((pagosres.vpagint+pagosres.vpagcap+vpagmora),2) as Cuota, format(pagosres.vpagmora,2) as Mora,\
           pagosres.norecibo as id from pagosres \
-          inner join solicit on pagosres.nosolic = solicit.id limit 30"
+          inner join solicit on pagosres.nosolic = solicit.id  where pagosres.cuota <> 0 limit 30"
           
           mycursor.execute(sql)
           data = mycursor.fetchall()

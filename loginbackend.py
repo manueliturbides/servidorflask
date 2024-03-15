@@ -299,7 +299,7 @@ def loginbackend_login():
              mycursor = conectar.cursor(dictionary=True)
              
              currency = CountryInfo(pais).currencies()[0]
-             sql = "select * from Currencies where Country = "+"'"+currency+"'"
+             sql = "select * from Currencies where country = "+"'"+currency+"'"
              mycursor.execute(sql)
              country = mycursor.fetchone()
              salida["currency"] = country["valor"]
@@ -317,7 +317,7 @@ def loginbackend_login():
                   result = json.loads(response.text)
                   date = datetime.datetime.today()
 
-                  sql = "update Currencies set date=%s,valor=%s where Country=%s"
+                  sql = "update Currencies set fecha=%s,valor=%s where country=%s"
                   val = (date,str(result["rates"][currency]),currency)
                   mycursor.execute(sql,val)
                   conectar.commit()

@@ -53,10 +53,10 @@ def conectUserDatabase(nombre):
          descmora float,sucursal varchar(15),user varchar(100),fecha_crea date, fecha_mod date,timestamp datetime, \
          tipodepago varchar(45),aprobacion varchar(45), numerotarjeta varchar(45),PRIMARY KEY(norecibo))")
  
-       mycursor.execute("create table if not exists pagos(norecibo MEDIUMINT NOT NULL AUTO_INCREMENT,noprest int,nosolic int,cedula varchar(15),\
+       mycursor.execute("create table if not exists pagos(norecibo int,noprest int,nosolic int,cedula varchar(15),\
          nocuota int,cuota float,mora float,fecha date,vpagint float,vpagmora float,vpagcap float,descinte float,fecha1 date,\
          descmora float,sucursal varchar(15),user varchar(100),fecha_crea date, \
-         balance float,fecha_mod date,timestamp datetime,PRIMARY KEY(norecibo))")
+         balance float,fecha_mod date,timestamp datetime)")
 
        
        return(mydb)
