@@ -161,32 +161,33 @@ def guardardatospagos():
    
           tmorapagado = tmorapagado + float(x['Mora'])
 
-          sql = "update amort set vpagcap = vpagcap + "+"'"+str(vcapitalpagado)+"',"+\
-          "vpagint = vpagint + "+"'"+str(vinterespagado)+"',"+\
-          "vpagmora = vpagmora + "+"'"+str(x['Mora'])+"',"+\
-          " status = if(amort.capital+amort.interes-amort.vpagcap-amort.vpagint-amort.descuento = 0,'P',''), "+\
-          " pagadodescuento = if(amort.descuento <> 0,'S','N') "+\
-          " where noprest = "+"'"+str(x['Snoprest'])+"'"+\
-          " and nocuota = "+"'"+str(x['Cuota'])+"'"
-          mycursor.execute(sql)
+          if float(x['Pagado']) != 0:
+             sql = "update amort set vpagcap = vpagcap + "+"'"+str(vcapitalpagado)+"',"+\
+             "vpagint = vpagint + "+"'"+str(vinterespagado)+"',"+\
+             "vpagmora = vpagmora + "+"'"+str(x['Mora'])+"',"+\
+             " status = if(amort.capital+amort.interes-amort.vpagcap-amort.vpagint-amort.descuento = 0,'P',''), "+\
+             " pagadodescuento = if(amort.descuento <> 0,'S','N') "+\
+             " where noprest = "+"'"+str(x['Snoprest'])+"'"+\
+             " and nocuota = "+"'"+str(x['Cuota'])+"'"
+             mycursor.execute(sql)
 
-          sql = "update prestamo set vpagcap = vpagcap + "+"'"+str(vcapitalpagado)+"',"+\
-          "vpagint = vpagint + "+"'"+str(vinterespagado+float(x['descuento'].replace(",","")))+"',"+\
-          "vpagmora = vpagmora + "+"'"+str(x['Mora'])+"',"+\
-          " status = if(prestamo.solicitado-prestamo.vpagcap = 0,'P','A'), "+\
-          " fultpago = "+"'"+str(datetime.now().date())+"',"+\
-          " montoult = "+"'"+str(x['Totalpago'])+"'"+\
-          " where noprest = "+"'"+str(x['Snoprest'])+"'"
-          mycursor.execute(sql)
+             sql = "update prestamo set vpagcap = vpagcap + "+"'"+str(vcapitalpagado)+"',"+\
+             "vpagint = vpagint + "+"'"+str(vinterespagado+float(x['descuento'].replace(",","")))+"',"+\
+             "vpagmora = vpagmora + "+"'"+str(x['Mora'])+"',"+\
+             " status = if(prestamo.solicitado-prestamo.vpagcap = 0,'P','A'), "+\
+             " fultpago = "+"'"+str(datetime.now().date())+"',"+\
+             " montoult = "+"'"+str(x['Totalpago'])+"'"+\
+             " where noprest = "+"'"+str(x['Snoprest'])+"'"
+             mycursor.execute(sql)
        
-          vinterespagado = 0
-          vcapitalpagado = 0
+             vinterespagado = 0
+             vcapitalpagado = 0
        
        sql = "insert into pagosres(noprest,nosolic,cedula,cuota,mora,fecha,vpagint,vpagmora,vpagcap,descinte,\
        user,fecha_crea,fecha_mod,tipodepago,aprobacion,numerotarjeta) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) "
 
        val = (noprest,row['nosolic'],row['cedula'],tvcapitalpagado+tvinterespagado+tmorapagado,tmorapagado,\
-              datetime.now().date(),tvinterespagado,tmorapagado,tvcapitalpagado,row['descuento'],row['user'],\
+              datetime.now().date(),tvinterespagado,tmorapagado,tvcapitalpagado,x['descuento'].replace(",",""),row['user'],\
                datetime.now().date(),datetime.now().date(),row['tipodepago'],row['aprobacion'],row['numerotarjeta']) 
        mycursor.execute(sql,val)
        
@@ -197,12 +198,12 @@ def guardardatospagos():
        
        for x in row['datospago']:
           
-          if (float(x['Pagado']) <= float(x['Sinteres'])) - float(x['descuento'].replace(",","")):
-             vinterespagado = float(x['Pagado'])
+          if (float(x['Pagado']) <= (float(x['Sinteres'])) - float(x['descuento'].replace(",",""))):
+             vinterespagado = float(x['Pagado']) 
              vcapitalpagado = 0
           else:
-             vinterespagado = float(x['Sinteres'])
-             vcapitalpagado = float(x['Pagado']) - float(x['Sinteres']) - float(x['descuento'].replace(",",""))     
+             vinterespagado = float(x['Sinteres'])-float(x['descuento'].replace(",",""))
+             vcapitalpagado = float(x['Pagado']) - (float(x['Sinteres']) - float(x['descuento'].replace(",","")))     
              
           
           if float(x['Pagado']) != 0:
@@ -212,7 +213,7 @@ def guardardatospagos():
                user,fecha_crea,fecha_mod,cuota,balance) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
          
              val = (lastid[0][0],x['Snoprest'],row['nosolic'],row['cedula'],x['Cuota'],x['Mora'],datetime.now().date(),vinterespagado,\
-                x['PagMora'],vcapitalpagado,row['descuento'],row['user'],datetime.now().date(),datetime.now().date(),vcapitalpagado+vinterespagado+float(x['Mora']),x['Balance'])
+                x['PagMora'],vcapitalpagado,x['descuento'].replace(",",""),row['user'],datetime.now().date(),datetime.now().date(),vcapitalpagado+vinterespagado+float(x['Mora']),x['Balance'])
           
              mycursor.execute(sql,val)
        
