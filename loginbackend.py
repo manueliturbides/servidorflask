@@ -317,7 +317,7 @@ def loginbackend_login():
                   result = json.loads(response.text)
                   date = datetime.datetime.today()
 
-                  sql = "update users set date=%s,valor=%s where Country=%s"
+                  sql = "update Currencies set date=%s,valor=%s where Country=%s"
                   val = (date,str(result["rates"][currency]),currency)
                   mycursor.execute(sql,val)
                   conectar.commit()
