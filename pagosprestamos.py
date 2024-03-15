@@ -190,9 +190,10 @@ def guardardatospagos():
                datetime.now().date(),datetime.now().date(),row['tipodepago'],row['aprobacion'],row['numerotarjeta']) 
        mycursor.execute(sql,val)
        
-       sql = "select last_insert_id() as list"
+       sql = "select last_insert_id() "
        mycursor.execute(sql)
        lastid = mycursor.fetchall()
+       print(lastid)
        
        for x in row['datospago']:
           
