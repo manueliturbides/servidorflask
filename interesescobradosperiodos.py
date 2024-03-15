@@ -43,7 +43,7 @@ def interesescobradosperiodos():
           sql = "select pagosres.norecibo as Nrecibo,pagosres.noprest as Noprest,date_format(pagosres.fecha,'%d-%m-%Y') as Fecha,\
           format(pagosres.vpagint,2) as Valor, concat(nombres,' ',apellidos) as Nombres,pagosres.norecibo as id from pagosres \
           inner join prestamo on pagosres.noprest = prestamo.noprest \
-          where pagosres.fecha between "+"'"+row['fechadesde']+"' and "+"'"+row['fechahasta']+"' and pagosres.vpagint <> 0"
+          where pagosres.fecha between "+"'"+row['fechadesde']+"' and "+"'"+row['fechahasta']+"'"
           mycursor.execute(sql)
           data = mycursor.fetchall()
           

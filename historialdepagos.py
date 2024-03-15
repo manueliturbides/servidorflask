@@ -57,7 +57,7 @@ def historialdepagos():
           
           mycursor.execute(sql)
           data = mycursor.fetchall()
-          
+                     
     except Exception as e:
           print(e)
           aerror = True
