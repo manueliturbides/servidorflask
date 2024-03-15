@@ -40,7 +40,7 @@ def consultadescuentoprestamos():
           conectar = conectUserDatabase(row['parent'])
           mycursor = conectar.cursor(dictionary=True)
           sql = "select nocuota as Nocuota,date_format(fecha,'%d-%m-%Y') as Fecha,format(cuota,2) as Valor,format((interes-(vpagint+ifnull(descuento,0))),2) as Interespend,ifnull(descuento,0) as Descuento,Pagadodescuento,id from amort \
-          where status <> 'P' and noprest = "+"'"+str(row['noprest'])+"'"
+          where status <> 'P' and noprest = "+"'"+str(row['noprest'])+"' and pagadodescuento = 'N'"
           mycursor.execute(sql)
           data = mycursor.fetchall()
           
