@@ -68,6 +68,54 @@ def usersconfigbackend_updateuser():
        res = make_response(jsonify( error),400)
        return res; 
 
+@usersconfigbackend_api.route("/api/usersconfigbackend_updateuserpassword",methods=['POST','GET'])
+def usersconfigbackend_updateuserpassword():    
+    aerror = False
+    error = {}
+    row = request.get_json()
+    
+    if "@" not in row["email"]:
+       aerror = True
+       aerror = "Email invalido"
+   
+
+    if len(row["password"]) < 5:
+       aerror = True
+       error = "Contraseña debe tener mas de 5 letras"
+
+    if aerror == False:
+       try:
+          conectar = mysql.connection
+          mycursor = conectar.cursor(dictionary=True)
+          sqlUser = "select * from users where email = "+"'"+row["email"]+"'"
+          mycursor.execute(sqlUser)
+          miuser = mycursor.fetchone()
+
+          sql = "update users set password=%s where email=%s"
+          val = (row["password"],row["email"])
+          mycursor.execute(sql,val)
+          conectar.commit()
+
+          print(miuser["parent"])
+          connectionUser = conectUserDatabase(miuser["parent"])
+          mycursor = connectionUser.cursor(dictionary=True)
+          sql = "update users set password=%s where email=%s"
+          val = (row["password"],row["email"])
+          mycursor.execute(sql,val)
+          connectionUser.commit()
+
+          res = make_response(jsonify({"success":"success"}),200)
+          return res
+       
+       except Exception as e:
+          print(e)
+          aerror = True
+          error = "Problemas para conectar la tabla "+str(e)        
+       
+    if aerror == True:
+       res = make_response(jsonify( error),400)
+       return res; 
+
 @usersconfigbackend_api.route("/api/usersconfigbackend_adduser",methods=['POST','GET'])
 def usersconfigbackend_adduser():    
     aerror = False

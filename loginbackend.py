@@ -115,6 +115,45 @@ def registerbackend_sendcode():
 
     return str(code)
 
+@loginbackend_api.route("/api/registerbackend_sendcodeNewPass",methods=['POST','GET'])
+def registerbackend_sendcodeNewPass():
+    
+    row = request.get_json()
+        
+    email = row["email"]
+    code = row["code"]
+    print(code)
+
+    msg = EmailMessage()
+    msg['Subject'] = 'PrestaQuiK Contacto'
+    msg['From'] = "support@suitorbit.com"
+    msg['To'] = email
+    msg.set_content('''
+                    <!DOCTYPE html>
+                      <html>
+                        <body style="background-color: white; ">
+                            <p>Solicitaste una nueva contraseña</p> 
+                            <p>Su código es: <strong>'''+str(code)+'''</strong> </p>
+                            <br></br>
+                            <p>Administración PrestaQuiK</p>
+                    
+
+                       </body>
+                      </html>''', subtype='html')
+
+    try:
+      server = smtplib.SMTP_SSL('smtp.mail.us-east-1.awsapps.com', 465)
+      server.ehlo()
+      server.login('support@suitorbit.com', 'Mr00100267590')
+      text = msg.as_string()
+      server.sendmail("support@suitorbit.com", email, text)
+      print('Email sent to %s' "email_recipient")
+    except Exception as e:
+      print(e)
+      print("SMTP server connection error")
+
+    return str(code)
+
 @loginbackend_api.route("/api/registerbackend_validateemail",methods=['POST','GET'])
 def registerbackend_validateemail():
     
