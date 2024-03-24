@@ -163,10 +163,13 @@ def vendedoresbackend_vendedordata():
           sql = "select * from clientes"
           mycursor.execute(sql)
           misclientes = mycursor.fetchall()
+          salida["clientes"] = misclientes 
+
 
           sql = "select * from user"
           mycursor.execute(sql)
           miuser = mycursor.fetchall()
+          salida["user"] = miuser
  
           sql = "SELECT SUM(numSuscrip) FROM facturas where MONTH(fecha) != '"+str(date.month)+"'  and retired='false'"
           mycursor.execute(sql)
@@ -175,7 +178,8 @@ def vendedoresbackend_vendedordata():
           sql = "SELECT numSuscrip FROM facturas WHERE MONTH(fecha) = '"+str(date.month)+"' AND YEAR(fecha) = '"+str(date.year)+"'"
           mycursor.execute(sql)
           monthpayment = mycursor.fetchone()
-          
+
+
           connection = mysql.connection
           mycursor = connection.cursor(dictionary=True)
           sql = "select total from transacciones where id = '"+row["id"]+"'"
@@ -183,8 +187,9 @@ def vendedoresbackend_vendedordata():
           pendientetransac = mycursor.fetchone()
 
 
-          salida["clientes"] = misclientes 
-          salida["user"] = miuser
+          conectar = conectUserDatabaseVendedor(row["id"])
+          mycursor = conectar.cursor(dictionary=True)
+          
           salida["payment"] = 0
           if payment[0]["SUM(numSuscrip)"] != None:
             salida["payment"] =  int(payment[0]["SUM(numSuscrip)"]) * 5
@@ -208,8 +213,7 @@ def vendedoresbackend_vendedordata():
             salida["transaccionpend"] = pendientetransac["total"]
 
           res = make_response(jsonify(salida),200)
-          return res 
-       
+          return res        
        
        except Exception as e:
           print(e)
@@ -349,7 +353,7 @@ def registerbackend_sendcode():
     try:
       server = smtplib.SMTP_SSL('smtp.mail.us-east-1.awsapps.com', 465)
       server.ehlo()
-      server.login('support@suitorbit.com', 'mr@00100267590')
+      server.login('support@suitorbit.com', 'Mr00100267590')
       text = msg.as_string()
       server.sendmail("support@suitorbit.com", email, text)
       print('Email sent to %s' "email_recipient")
