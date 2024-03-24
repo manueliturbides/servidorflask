@@ -42,7 +42,7 @@ def vendedoresbackend_paypaldata():
        try:
 
 
-          connectionUser = conectUserDatabaseVendedor(row["id"])
+          connectionUser = conectUserDatabaseVendedor(row["id"]+"_vend")
           mycursor = connectionUser.cursor(dictionary=True)
           sql = "update user set paypal=%s where id=%s"
           val = (row["emailPayPal"],row["id"])
@@ -84,7 +84,7 @@ def vendedoresbackend_retirar():
           mycursor.execute(sql,val)
           connection.commit()
 
-          connectionUser = conectUserDatabaseVendedor(row["id"])
+          connectionUser = conectUserDatabaseVendedor(row["id"]+"_vend")
           mycursor = connectionUser.cursor(dictionary=True)
           sql = "update facturas set retired=%s where MONTH(fecha) != '"+str(date.month)+"'"
           val = ("true",)
@@ -128,7 +128,7 @@ def vendedoresbackend_updateuser():
           mycursor.execute(sql,val)
           conectar.commit()
 
-          connectionUser = conectUserDatabaseVendedor(row["id"])
+          connectionUser = conectUserDatabaseVendedor(row["id"]+"_vend")
           mycursor = connectionUser.cursor(dictionary=True)
           sql = "update user set nombre=%s,email=%s,password=%s where id=%s"
           val = (row["nombre"],row["email"],row["password"],row["id"])
@@ -158,7 +158,7 @@ def vendedoresbackend_vendedordata():
     if aerror == False:
        try:
           date = datetime.today()
-          conectar = conectUserDatabaseVendedor(row["id"])
+          conectar = conectUserDatabaseVendedor(row["id"]+"_vend")
           mycursor = conectar.cursor(dictionary=True)
           sql = "select * from clientes"
           mycursor.execute(sql)
@@ -187,7 +187,7 @@ def vendedoresbackend_vendedordata():
           pendientetransac = mycursor.fetchone()
 
 
-          conectar = conectUserDatabaseVendedor(row["id"])
+          conectar = conectUserDatabaseVendedor(row["id"]+"_vend")
           mycursor = conectar.cursor(dictionary=True)
           
           salida["payment"] = 0
@@ -198,7 +198,7 @@ def vendedoresbackend_vendedordata():
             sql = "SELECT COUNT(*) FROM clientes"
             mycursor.execute(sql)
             numclient = mycursor.fetchall()[0]["COUNT(*)"]
-            print(numclient)
+            
 
 
             sql = "insert into facturas(fecha,numSuscrip,retired) values(%s,%s,%s)"
@@ -289,7 +289,7 @@ def vendedoresbackend_registrar():
     
     if aerror == False:
        try:
-          connectionUser = conectUserDatabaseVendedor(row["id"])
+          connectionUser = conectUserDatabaseVendedor(row["id"]+"_vend")
           mycursor = connectionUser.cursor()
           sql = "insert into user(id,nombre,email,password,promcode) values(%s,%s,%s,%s,%s)"
           val = (row["id"],row["email"].split("@")[0],row["email"],row["password"],row["promcode"])
