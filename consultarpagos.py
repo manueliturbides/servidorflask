@@ -51,7 +51,19 @@ def consultarpagos():
           
           if mycursor.rowcount == 0:
              aerror = True
-             error = "No hay datos para recuperar" 
+             error = "No hay datos para recuperar"
+
+
+          sql = "select sum(pagores.cuota) as monto,monthname(pagores.fecha) as mes from pagores where pagosres.fecha between "+"'"+str(row['fechadesde'])+"' and"+"'"+str(row['fechahasta'])+"'"+"  group by month(fecha) "
+          mycursor.execute(sql)
+          grafico = mycursor.fetchall()
+
+          listavalor = []
+          listames = []
+          for x in grafico:
+              listavalor.append(x['monto'])
+              listames.append(x['mes']) 
+          
 
           conectar.close() 
            
@@ -64,7 +76,7 @@ def consultarpagos():
        res = make_response(jsonify({"Error": error}),400)
        return res; 
     if aerror == False:
-       res = make_response(jsonify({"data":data}),200)
+       res = make_response(jsonify({"data":data,"listavalor": listavalor, "listames":listames}),200)
        return res; 
 
 @consultarpagos_api.route("/api/consultarpagosgeneral",methods=['POST','GET'])
@@ -95,6 +107,18 @@ def consultarpagosgeneral():
              aerror = True
              error = "No hay datos para recuperar" 
 
+          else:
+              sql = "select sum(pagores.cuota) as monto,monthname(pagores.fecha) as mes from pagores group by month(fecha) "
+              mycursor.execute(sql)
+              grafico = mycursor.fetchall()
+
+              listavalor = []
+              listames = []
+              for x in grafico:
+                 listavalor.append(x['monto'])
+                 listames.append(x['mes']) 
+          
+          
           conectar.close() 
            
     except Exception as e:
@@ -106,6 +130,6 @@ def consultarpagosgeneral():
        res = make_response(jsonify({"Error": error}),400)
        return res; 
     if aerror == False:
-       res = make_response(jsonify({"data":data}),200)
+       res = make_response(jsonify({"data":data,"listavalor": listavalor, "listames":listames}),200)
        return res; 
             
