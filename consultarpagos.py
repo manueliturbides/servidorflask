@@ -53,16 +53,16 @@ def consultarpagos():
              aerror = True
              error = "No hay datos para recuperar"
 
+          else:
+            sql = "select sum(pagores.cuota) as monto,monthname(pagores.fecha) as mes from pagores where pagosres.fecha between "+"'"+str(row['fechadesde'])+"' and "+"'"+str(row['fechahasta'])+"'"+"  group by month(fecha) "
+            mycursor.execute(sql)
+            grafico = mycursor.fetchall()
 
-          sql = "select sum(pagores.cuota) as monto,monthname(pagores.fecha) as mes from pagores where pagosres.fecha between "+"'"+str(row['fechadesde'])+"' and"+"'"+str(row['fechahasta'])+"'"+"  group by month(fecha) "
-          mycursor.execute(sql)
-          grafico = mycursor.fetchall()
-
-          listavalor = []
-          listames = []
-          for x in grafico:
-              listavalor.append(x['monto'])
-              listames.append(x['mes']) 
+            listavalor = []
+            listames = []
+            for x in grafico:
+                listavalor.append(x['monto'])
+                listames.append(x['mes']) 
           
 
           conectar.close() 
