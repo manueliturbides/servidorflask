@@ -108,7 +108,7 @@ def consultarpagosgeneral():
              error = "No hay datos para recuperar" 
 
           else:
-              sql = "select sum(pagores.cuota) as monto,monthname(pagores.fecha) as mes from pagores group by month(fecha) "
+              sql = "select sum(pagosres.cuota) as monto,monthname(pagosres.fecha) as mes from pagosres group by month(fecha) "
               mycursor.execute(sql)
               grafico = mycursor.fetchall()
 
