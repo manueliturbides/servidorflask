@@ -42,7 +42,7 @@ def vendedoresbackend_paypaldata():
        try:
 
 
-          connectionUser = conectUserDatabaseVendedor(row["id"])
+          connectionUser = conectUserDatabaseVendedor(row["id"]+"_vend")
           mycursor = connectionUser.cursor(dictionary=True)
           sql = "update user set paypal=%s where id=%s"
           val = (row["emailPayPal"],row["id"])
@@ -84,7 +84,7 @@ def vendedoresbackend_retirar():
           mycursor.execute(sql,val)
           connection.commit()
 
-          connectionUser = conectUserDatabaseVendedor(row["id"])
+          connectionUser = conectUserDatabaseVendedor(row["id"]+"_vend")
           mycursor = connectionUser.cursor(dictionary=True)
           sql = "update facturas set retired=%s where MONTH(fecha) != '"+str(date.month)+"'"
           val = ("true",)
@@ -128,7 +128,7 @@ def vendedoresbackend_updateuser():
           mycursor.execute(sql,val)
           conectar.commit()
 
-          connectionUser = conectUserDatabaseVendedor(row["id"])
+          connectionUser = conectUserDatabaseVendedor(row["id"]+"_vend")
           mycursor = connectionUser.cursor(dictionary=True)
           sql = "update user set nombre=%s,email=%s,password=%s where id=%s"
           val = (row["nombre"],row["email"],row["password"],row["id"])
@@ -158,15 +158,18 @@ def vendedoresbackend_vendedordata():
     if aerror == False:
        try:
           date = datetime.today()
-          conectar = conectUserDatabaseVendedor(row["id"])
+          conectar = conectUserDatabaseVendedor(row["id"]+"_vend")
           mycursor = conectar.cursor(dictionary=True)
           sql = "select * from clientes"
           mycursor.execute(sql)
           misclientes = mycursor.fetchall()
+          salida["clientes"] = misclientes 
+
 
           sql = "select * from user"
           mycursor.execute(sql)
           miuser = mycursor.fetchall()
+          salida["user"] = miuser
  
           sql = "SELECT SUM(numSuscrip) FROM facturas where MONTH(fecha) != '"+str(date.month)+"'  and retired='false'"
           mycursor.execute(sql)
@@ -175,7 +178,8 @@ def vendedoresbackend_vendedordata():
           sql = "SELECT numSuscrip FROM facturas WHERE MONTH(fecha) = '"+str(date.month)+"' AND YEAR(fecha) = '"+str(date.year)+"'"
           mycursor.execute(sql)
           monthpayment = mycursor.fetchone()
-          
+
+
           connection = mysql.connection
           mycursor = connection.cursor(dictionary=True)
           sql = "select total from transacciones where id = '"+row["id"]+"'"
@@ -183,8 +187,9 @@ def vendedoresbackend_vendedordata():
           pendientetransac = mycursor.fetchone()
 
 
-          salida["clientes"] = misclientes 
-          salida["user"] = miuser
+          conectar = conectUserDatabaseVendedor(row["id"]+"_vend")
+          mycursor = conectar.cursor(dictionary=True)
+          
           salida["payment"] = 0
           if payment[0]["SUM(numSuscrip)"] != None:
             salida["payment"] =  int(payment[0]["SUM(numSuscrip)"]) * 5
@@ -193,7 +198,7 @@ def vendedoresbackend_vendedordata():
             sql = "SELECT COUNT(*) FROM clientes"
             mycursor.execute(sql)
             numclient = mycursor.fetchall()[0]["COUNT(*)"]
-            print(numclient)
+            
 
 
             sql = "insert into facturas(fecha,numSuscrip,retired) values(%s,%s,%s)"
@@ -208,8 +213,7 @@ def vendedoresbackend_vendedordata():
             salida["transaccionpend"] = pendientetransac["total"]
 
           res = make_response(jsonify(salida),200)
-          return res 
-       
+          return res        
        
        except Exception as e:
           print(e)
@@ -285,7 +289,7 @@ def vendedoresbackend_registrar():
     
     if aerror == False:
        try:
-          connectionUser = conectUserDatabaseVendedor(row["id"])
+          connectionUser = conectUserDatabaseVendedor(row["id"]+"_vend")
           mycursor = connectionUser.cursor()
           sql = "insert into user(id,nombre,email,password,promcode) values(%s,%s,%s,%s,%s)"
           val = (row["id"],row["email"].split("@")[0],row["email"],row["password"],row["promcode"])
@@ -349,7 +353,7 @@ def registerbackend_sendcode():
     try:
       server = smtplib.SMTP_SSL('smtp.mail.us-east-1.awsapps.com', 465)
       server.ehlo()
-      server.login('support@suitorbit.com', 'mr@00100267590')
+      server.login('support@suitorbit.com', 'Mr00100267590')
       text = msg.as_string()
       server.sendmail("support@suitorbit.com", email, text)
       print('Email sent to %s' "email_recipient")
