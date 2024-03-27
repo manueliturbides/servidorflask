@@ -106,33 +106,42 @@ def getparents():
     misusers = mycursor.fetchall()
 
     for x in misusers:
-      conectar = conectUserDatabase(x)
+      conectar = conectUserDatabase(x["parent"])
       mycursor = conectar.cursor(dictionary=True)
       sql = "select solicit.email as email, fecha as fechavenc, \
           format(amort.capital+amort.interes-amort.vpagcap-amort.vpagint,2) as balance from amort \
           inner join solicit on solicit.id = amort.nosolic \
-          where datediff(fecha,now()) = 3"
+          where datediff(fecha,now()) = 1"
       mycursor.execute(sql)
       data = mycursor.fetchall()
+
+
+      sql = "select * from company"
+      mycursor.execute(sql)
+      dataComp = mycursor.fetchall()
+      nameCompany = dataComp[0]["nombre"]
+      
+      if len(nameCompany)==0:
+        nameCompany = "Recordatorio de Pago"         
+      
 
       for y in data:
         email = y["email"]
         texto = "texto" #row["texto"]
   
         msg = EmailMessage()
-        msg['Subject'] = 'SuitOrbit Contact'
+        msg['Subject'] = nameCompany
         msg['From'] = "support@suitorbit.com"
         msg['To'] = email
         msg.set_content('''
                     <!DOCTYPE html>
                       <html>
                         <body style="background-color: #eee; display: flex; align-items: center; justify-content: center;">
-                          <div style=" background-color: white; border-radius: 10px; border-width: 10px; width: 530px; height: 340px; margin:30px">
+                          <div style=" background-color: white; border-radius: 10px; border-width: 10px; width: 450px; height: 340px; margin:30px">
                             <div style="background-color:#f56016;margin-top: -20px; height: 110px; border-top-left-radius: 10px;border-top-right-radius: 10px; border-width: 10px; display:flex; align-items: center; justify-content: center;">
                               <h2 style="color: white; font-family:sans-serif">Recordatorio de pago</h2>
                             </div>
-
-                            <div style="width:530px; background-color: white; ">
+                            <div style="width:450px; background-color: white; ">
                               <div style="text-align: center; margin-left: 15px; margin-right:15px; font-family: Nunito; font-size: 18px;">
                                 <p >Hola!</p>
                                 <p>Te recordamos que debes hacer el pago de tu prestamo</p>

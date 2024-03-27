@@ -108,16 +108,18 @@ def consultarpagosgeneral():
              error = "No hay datos para recuperar" 
 
           else:
-              sql = "select sum(pagosres.cuota) as monto,monthname(pagosres.fecha) as mes from pagosres group by month(fecha) "
+              sql = "select sum(pagosres.cuota) as monto,monthname(pagosres.fecha) as mes,sum(pagosres.mora) as mora from pagosres group by month(fecha) "
               mycursor.execute(sql)
               grafico = mycursor.fetchall()
 
               listavalor = []
               listames = []
+              listamora = []
               for x in grafico:
+                 listamora.append(x['mora'])
                  listavalor.append(x['monto'])
                  listames.append(x['mes']) 
-          
+                 
           
           conectar.close() 
            
@@ -130,6 +132,6 @@ def consultarpagosgeneral():
        res = make_response(jsonify({"Error": error}),400)
        return res; 
     if aerror == False:
-       res = make_response(jsonify({"data":data,"listavalor": listavalor, "listames":listames}),200)
+       res = make_response(jsonify({"data":data,"listavalor": listavalor, "listames":listames,"listamora":listamora}),200)
        return res; 
             
