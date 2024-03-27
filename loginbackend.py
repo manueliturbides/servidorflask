@@ -90,17 +90,25 @@ def registerbackend_sendcode():
     msg['From'] = "support@suitorbit.com"
     msg['To'] = email
     msg.set_content('''
-                    <!DOCTYPE html>
-                      <html>
-                        <body style="background-color: white; ">
-                            <p>Gracias por registrarte en PrestaQuiK</p> 
-                            <p>Su código de registro es: <strong>'''+str(code)+''''</strong> </p>
-                            <br></br>
-                            <p>Administración PrestaQuiK</p>
-                    
-
-                       </body>
-                      </html>''', subtype='html')
+         <!DOCTYPE html>
+            <html>
+               <body style="background-color: #eee; display: flex; align-items: center; justify-content: center;">
+                  <div style=" background-color: white; border-radius: 10px; border-width: 10px; width: 530px; height: 340px; margin:30px">
+                     <div style="background-color:#f56016;margin-top: -20px; height: 110px; border-top-left-radius: 10px;border-top-right-radius: 10px; border-width: 10px; display:flex; align-items: center; justify-content: center;">
+                        <h2 style="color: white; font-family:sans-serif">Bienvenido a PrestaQuik</h2>
+                     </div>
+                    <div style="width:530px; background-color: white; ">
+                        <div style="text-align: center; margin-left: 15px; margin-right:15px; font-family: Nunito; font-size: 18px;">
+                           <p >Hola '''+email+'''!</p>
+                           <p>Aquí tienes el código de verificación que solicitaste para confirmar tu inicio de sesión reciente:</p>
+                           <b>'''+str(code)+'''</b>
+                           <p>Gracias,  Team TeenNet</p>
+                        </div>
+                    </div>
+                    <div style="background-color:black;margin-top: 55px; height: 20px; border-bottom-left-radius: 10px;border-bottom-right-radius: 10px; border-width: 10px;"></div>
+                  </div>
+               </body>
+           </html>''', subtype='html')
 
     try:
       server = smtplib.SMTP_SSL('smtp.mail.us-east-1.awsapps.com', 465)
@@ -129,17 +137,25 @@ def registerbackend_sendcodeNewPass():
     msg['From'] = "support@suitorbit.com"
     msg['To'] = email
     msg.set_content('''
-                    <!DOCTYPE html>
-                      <html>
-                        <body style="background-color: white; ">
-                            <p>Solicitaste una nueva contraseña</p> 
-                            <p>Su código es: <strong>'''+str(code)+'''</strong> </p>
-                            <br></br>
-                            <p>Administración PrestaQuiK</p>
-                    
-
-                       </body>
-                      </html>''', subtype='html')
+         <!DOCTYPE html>
+            <html>
+               <body style="background-color: #eee; display: flex; align-items: center; justify-content: center;">
+                  <div style=" background-color: white; border-radius: 10px; border-width: 10px; width: 530px; height: 340px; margin:30px">
+                     <div style="background-color:#f56016;margin-top: -20px; height: 110px; border-top-left-radius: 10px;border-top-right-radius: 10px; border-width: 10px; display:flex; align-items: center; justify-content: center;">
+                        <h2 style="color: white; font-family:sans-serif">Solicitud contaseña PrestaQuik</h2>
+                     </div>
+                    <div style="width:530px; background-color: white; ">
+                        <div style="text-align: center; margin-left: 15px; margin-right:15px; font-family: Nunito; font-size: 18px;">
+                           <p >Hola '''+email+'''!</p>
+                           <p>Solicitaste una nueva contraseña, su código de verificación es:</p>
+                           <b>'''+str(code)+'''</b>
+                           <p>Gracias,  Team TeenNet</p>
+                        </div>
+                    </div>
+                    <div style="background-color:black;margin-top: 55px; height: 20px; border-bottom-left-radius: 10px;border-bottom-right-radius: 10px; border-width: 10px;"></div>
+                  </div>
+               </body>
+           </html>''', subtype='html')
 
     try:
       server = smtplib.SMTP_SSL('smtp.mail.us-east-1.awsapps.com', 465)

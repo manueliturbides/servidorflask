@@ -97,8 +97,66 @@ def geocode():
   print('Latitude: '+str(lat)+', Longitude: '+str(long))
   return "success"
 
-@application.route('/currencies',methods=['POST','GET'])
-def get_cities():
+@application.route('/parents',methods=['POST','GET'])
+def getparents():
+    conectar = mysql.connection
+    mycursor = conectar.cursor(dictionary=True)
+    sql = "SELECT DISTINCT parent FROM users;"
+    mycursor.execute(sql)
+    misusers = mycursor.fetchall()
+
+    for x in misusers:
+      conectar = conectUserDatabase(x)
+      mycursor = conectar.cursor(dictionary=True)
+      sql = "select solicit.email as email, fecha as fechavenc, \
+          format(amort.capital+amort.interes-amort.vpagcap-amort.vpagint,2) as balance from amort \
+          inner join solicit on solicit.id = amort.nosolic \
+          where datediff(fecha,now()) = 3"
+      mycursor.execute(sql)
+      data = mycursor.fetchall()
+
+      for y in data:
+        email = y["email"]
+        texto = "texto" #row["texto"]
+  
+        msg = EmailMessage()
+        msg['Subject'] = 'SuitOrbit Contact'
+        msg['From'] = "support@suitorbit.com"
+        msg['To'] = email
+        msg.set_content('''
+                    <!DOCTYPE html>
+                      <html>
+                        <body style="background-color: #eee; display: flex; align-items: center; justify-content: center;">
+                          <div style=" background-color: white; border-radius: 10px; border-width: 10px; width: 530px; height: 340px; margin:30px">
+                            <div style="background-color:#f56016;margin-top: -20px; height: 110px; border-top-left-radius: 10px;border-top-right-radius: 10px; border-width: 10px; display:flex; align-items: center; justify-content: center;">
+                              <h2 style="color: white; font-family:sans-serif">Recordatorio de pago</h2>
+                            </div>
+
+                            <div style="width:530px; background-color: white; ">
+                              <div style="text-align: center; margin-left: 15px; margin-right:15px; font-family: Nunito; font-size: 18px;">
+                                <p >Hola!</p>
+                                <p>Te recordamos que debes hacer el pago de tu prestamo</p>
+                                <strong>'''+y["balance"]+'''</strong> 
+                                <p>Gracias</p>
+                              </div>
+                            </div>
+                            <div style="background-color:black;margin-top: 55px; height: 20px; border-bottom-left-radius: 10px;border-bottom-right-radius: 10px; border-width: 10px;"></div>
+                          </div>
+                        </body>
+                      </html>''', subtype='html')
+
+        try:
+          server = smtplib.SMTP_SSL('smtp.mail.us-east-1.awsapps.com', 465)
+          server.ehlo()
+          server.login('support@suitorbit.com', 'Mr00100267590')
+          text = msg.as_string()
+          server.sendmail("support@suitorbit.com", email, text)
+          server.quit()
+        except Exception as e:
+          print("SMTP server connection error sksk")
+      
+      conectar.close() 
+
 
     return "matching_cities"
     
@@ -120,14 +178,22 @@ def contactprosecom():
     msg.set_content('''
                     <!DOCTYPE html>
                       <html>
-                        <body style="background-color: white; ">
-                            <p>Gracias por comunicarte con SuitOrbit</p> 
-                            <p>Le estaremos respondiendo proximamente. </p>
-                            <br></br>
-                            <p>Administración SuitOrbit</p>
-                    
+                        <body style="background-color: #eee; display: flex; align-items: center; justify-content: center;">
+                          <div style=" background-color: white; border-radius: 10px; border-width: 10px; width: 530px; height: 340px; margin:30px">
+                            <div style="background-color:#f56016;margin-top: -20px; height: 110px; border-top-left-radius: 10px;border-top-right-radius: 10px; border-width: 10px; display:flex; align-items: center; justify-content: center;">
+                              <h2 style="color: white; font-family:sans-serif">PrestaQuik</h2>
+                            </div>
 
-                       </body>
+                            <div style="width:530px; background-color: white; ">
+                              <div style="text-align: center; margin-left: 15px; margin-right:15px; font-family: Nunito; font-size: 18px;">
+                                <p >Hola!</p>
+                                <p>Estaremos respondiendo lo más rápido posible</p>
+                                <p>Gracias,  equipo PrestaQuik</p>
+                              </div>
+                            </div>
+                            <div style="background-color:black;margin-top: 55px; height: 20px; border-bottom-left-radius: 10px;border-bottom-right-radius: 10px; border-width: 10px;"></div>
+                          </div>
+                        </body>
                       </html>''', subtype='html')
 
     try:
