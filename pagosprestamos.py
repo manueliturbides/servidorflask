@@ -40,7 +40,7 @@ def recuperartablaamortizacion():
           conectar = conectUserDatabase(row['parent'])
           mycursor = conectar.cursor(dictionary=True)
           sql = "select amort.nocuota as Cuota,date_format(amort.fecha,'%d-%m-%Y') as Fecha,concat(prestamo.nombres,' ',prestamo.apellidos) as Nombres,\
-              format(amort.capital+amort.interes-amort.vpagcap-amort.vpagint-amort.descuento,2) as Valor, \
+              format((amort.capital+amort.interes)-amort.vpagcap-amort.vpagint-amort.descuento,2) as Valor, \
               if(datediff("+"'"+str(datetime.now().date())+"'"+",amort.fecha) > 3,\
               ((solicit.valorcuotas*(solicit.mora/100))/30)*(datediff("+"'"+str(datetime.now().date())+"'"+",amort.fecha)),'0.00') as Mora,\
               '0.00' as Pagado,'0.00' as PagMora, 0.0 as Balance, \
@@ -83,6 +83,46 @@ def recuperartablaamortizacion():
     if aerror == False:
        res = make_response(jsonify({"data":data,"datacuentaactiva":datacuentaactiva,"dataprestamo": dataprestamo}),200)
        return res; 
+
+@pagosprestamos_api.route("/api/buscarpagoshoy",methods=['POST','GET'])
+def buscarprestamoshoy():
+    
+    aerror = False
+    salida = {}
+    row = request.get_json()
+    
+    try:
+       ###validar campos de entrada
+
+       aerror = False
+
+       if aerror == False:
+          
+          conectar = conectUserDatabase(row['parent'])
+          mycursor = conectar.cursor(dictionary=True)
+          sql = "select solicit.email as email, fecha as fechavenc, \
+          format(amort.capital+amort.interes-amort.vpagcap-amort.vpagint,2) as balance from amort \
+          inner join solicit on solicit.id = amort.nosolic \
+          where datediff(fecha,now()) = 3"
+
+
+          mycursor.execute(sql)
+          data = mycursor.fetchall()
+          conectar.close() 
+
+    except Exception as e:
+          print(e)
+          aerror = True
+          error = "Problemas para conectar la tabla "+str(e)        
+       
+    if aerror == True:
+       res = make_response(jsonify({"Error": error}),400)
+       return res; 
+    if aerror == False:
+       res = make_response(jsonify({"data":data}),200)
+       return res; 
+
+
 
 @pagosprestamos_api.route("/api/recuperarprestamosactivos",methods=['POST','GET'])
 def recuperarprestamosactivos():

@@ -1,9 +1,11 @@
+import configuracionservidor
+
 def conectServerDatabase():
     import mysql.connector
     
     try:
               #crear base de datos
-       mydb = mysql.connector.connect(host="general.c78ou26kqg7e.us-east-1.rds.amazonaws.com",user="root",password="00100267590",port = 3306)
+       mydb = mysql.connector.connect(host=configuracionservidor.Zhost,user="root",password="00100267590",port = 3306)
 
        return(mydb)
     except Exception as e:
@@ -15,7 +17,7 @@ def conectUserDatabase(nombre):
     
     try:
        #crear base de datos
-       mydb = mysql.connector.connect(host="general.c78ou26kqg7e.us-east-1.rds.amazonaws.com",user="root",password="00100267590",port = 3306)
+       mydb = mysql.connector.connect(host=configuracionservidor.Zhost,user="root",password="00100267590",port = 3306)
 #       mydb = mysql.connector.connect(host="127.0.0.1",user="miturbides",password="00100267590",port = 3306)
        
        mycursor = mydb.cursor()
@@ -23,7 +25,7 @@ def conectUserDatabase(nombre):
        mycursor.execute(db_query)
        
 
-       mydb=mysql.connector.connect(host="general.c78ou26kqg7e.us-east-1.rds.amazonaws.com",user="root",password="00100267590",port = 3306,database=nombre)
+       mydb=mysql.connector.connect(host=configuracionservidor.Zhost,user="root",password="00100267590",port = 3306,database=nombre)
        #mydb=mysql.connector.connect(host="127.0.0.1",user="miturbides",password="00100267590",port = 3306,database=nombre)
        mycursor = mydb.cursor(dictionary=True)
  
@@ -71,16 +73,14 @@ def conectUserDatabaseVendedor(nombre):
     
     try:
               #crear base de datos
-       print("1")
-       mydb = mysql.connector.connect(host="general.c78ou26kqg7e.us-east-1.rds.amazonaws.com",user="root",password="00100267590",port = 3306)
+       mydb = mysql.connector.connect(host=configuracionservidor.Zhost,user="root",password="00100267590",port = 3306)
 #       mydb = mysql.connector.connect(host="127.0.0.1",user="miturbides",password="00100267590",port = 3306)
        
        mycursor = mydb.cursor()
        db_query = f'CREATE DATABASE IF NOT EXISTS`{nombre}`'
        mycursor.execute(db_query)
-       print("2")
 
-       mydb=mysql.connector.connect(host="general.c78ou26kqg7e.us-east-1.rds.amazonaws.com",user="root",password="00100267590",port = 3306,database=nombre)
+       mydb=mysql.connector.connect(host=configuracionservidor.Zhost,user="root",password="00100267590",port = 3306,database=nombre)
        mycursor = mydb.cursor(dictionary=True)
        
        print("3")

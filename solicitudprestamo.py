@@ -51,6 +51,44 @@ def ftuser(_id,num):
    return response
 
 
+@ingresosolicitudprestamo_api.route('/api/modificarfoto',methods=['POST','GET'])
+def modificarfoto():
+    
+    try:
+      aerror = False
+      salida = {}
+
+      try:
+        imagefile = request.files['image']
+        bin_file = imagefile.read()
+      except Exception as e:
+        bin_file = "" 
+   
+      jsonData = request.form["json"]
+      row = json.loads(jsonData)
+
+      connectionUser = conectUserDatabase(row['parent'])
+      mycursor = connectionUser.cursor(dictionary=True)
+   
+      sqlCompany = "update solicit set foto = %s where id = "+str(row['id'])
+      val = (bin_file,)
+      mycursor.execute(sqlCompany,val)
+      connectionUser.commit()
+
+    except Exception as e:
+      print(e)
+      aerror = True
+      error = "No pudo modificar la foto "+str(e) 
+
+    if aerror == True:
+       res = make_response(jsonify({"Error": error}),400)
+       return res; 
+    if aerror == False:
+         res = make_response(jsonify({"ok": "ok"}),200)
+         return res; 
+    
+     
+
 @ingresosolicitudprestamo_api.route("/api/ingresarsolicitudprestamo",methods=['POST','GET'])
 def ingresarsolicitudprestamo():
     

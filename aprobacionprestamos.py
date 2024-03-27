@@ -146,13 +146,13 @@ def aprobacionprestamos():
              for x in range(data[0]['plazo']):
          
                  sql = "insert into amort(nosolic,noprest,cedula,nocuota,cuota,capital,interes,balance,\
-                 vpagcap,vpagint,vpagmora,status,pcuotas,user,fecha_crea,fecha_mod,fecha) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                 vpagcap,vpagint,vpagmora,status,pcuotas,user,fecha_crea,fecha_mod,fecha,descuento) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
 
                  capital = data[0]['valorcuotas']
                  bcependiente = bcependiente  - (data[0]['valorcuotas'])
 
                  val = (data[0]['Num'],nopres1[0]['noprest'],data[0]['cedula'],c,data[0]['valorcuotas'],capital-interes,
-                       interes,bcependiente,0.0,0.0,0.0," ",0,row['user'],datetime.now().date(),datetime.now().date(),fechacuota)
+                       interes,bcependiente,0.0,0.0,0.0," ",0,row['user'],datetime.now().date(),datetime.now().date(),fechacuota,0)
                  
 
                  if data[0]['formapago'] == "Diario": 
