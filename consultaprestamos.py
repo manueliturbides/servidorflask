@@ -137,7 +137,7 @@ def consultarprestamogeneral():
           sql = "select prestamo.noprest as Noprest,date_format(prestamo.fecha,'%d-%m-%Y') as Fecha,concat(prestamo.nombres,' ',prestamo.apellidos) as Nombres,\
           format(solicit.deudatotal,2) as Valor,\
           prestamo.status as Status,prestamo.noprest as id, solicit.id as Nosolic from prestamo \
-          inner join solicit on prestamo.nosolic = solicit.id limit 30"
+          inner join solicit on prestamo.nosolic = solicit.id order by prestamo.fecha desc limit 30"
           
           mycursor.execute(sql)
           data = mycursor.fetchall()

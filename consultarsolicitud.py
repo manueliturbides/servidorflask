@@ -93,11 +93,11 @@ def consultarsolicitudgeneral():
           mycursor = conectar.cursor(dictionary=True)
           sql = "select solicit.id as Nosolic,date_format(solicit.fecha_crea,'%d-%m-%Y') as Fecha,concat(solicit.nombres,' ',solicit.apellidos) as Nombres,\
           format(solicit.deudatotal,2) as Valor,\
-          solicit.aprobado as Aprobado,solicit.id as id from solicit where aprobado = 'N' limit 30 "
+          solicit.aprobado as Aprobado,solicit.id as id from solicit order by solicit.fecha_crea desc limit 30 "
           
           mycursor.execute(sql)
           data = mycursor.fetchall()
-      
+          
           if mycursor.rowcount == 0:
              aerror = True
              error = "No hay datos que recuperar" 

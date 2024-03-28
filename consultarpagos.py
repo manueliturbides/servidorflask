@@ -54,16 +54,17 @@ def consultarpagos():
              error = "No hay datos para recuperar"
 
           if aerror == False:
-            sql = "select sum(pagosres.cuota) as monto,monthname(pagosres.fecha) as mes from pagosres where pagosres.fecha between "+"'"+str(row['fechadesde'])+"' and "+"'"+str(row['fechahasta'])+"'"+"  group by month(fecha) "
+            sql = "select sum(pagosres.cuota) as monto,monthname(pagosres.fecha) as mes,sum(pagosres.mora) as mora from pagosres where pagosres.fecha between "+"'"+str(row['fechadesde'])+"' and "+"'"+str(row['fechahasta'])+"'"+"  group by month(fecha) "
             mycursor.execute(sql)
             grafico = mycursor.fetchall()
 
             listavalor = []
             listames = []
+            listamora = []
             for x in grafico:
                 listavalor.append(x['monto'])
                 listames.append(x['mes']) 
-          
+                listamora.append(x['mora'])
 
           conectar.close() 
            
@@ -76,7 +77,7 @@ def consultarpagos():
        res = make_response(jsonify({"Error": error}),400)
        return res; 
     if aerror == False:
-       res = make_response(jsonify({"data":data,"listavalor": listavalor, "listames":listames}),200)
+       res = make_response(jsonify({"data":data,"listavalor": listavalor, "listames":listames,"listamora":listamora}),200)
        return res; 
 
 @consultarpagos_api.route("/api/consultarpagosgeneral",methods=['POST','GET'])
@@ -98,7 +99,7 @@ def consultarpagosgeneral():
           sql = "select pagosres.noprest as Noprest, pagosres.norecibo as Norecibo,date_format(pagosres.fecha,'%d-%m-%Y') as Fecha,\
           concat(solicit.nombres,' ',solicit.apellidos) as Nombres,format((pagosres.vpagint+pagosres.vpagcap+vpagmora),2) as Cuota, format(pagosres.vpagmora,2) as Mora,\
           pagosres.norecibo as id from pagosres \
-          inner join solicit on pagosres.nosolic = solicit.id  where pagosres.cuota <> 0 limit 30"
+          inner join solicit on pagosres.nosolic = solicit.id  where pagosres.cuota <> 0 order by pagosres.fecha desc limit 30 "
           
           mycursor.execute(sql)
           data = mycursor.fetchall()

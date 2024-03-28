@@ -411,21 +411,17 @@ def modificardatossolicitud():
           if len(row['telefonofiador']) == 0:
             error = "Datos incompletos, por favor revisar" 
             aerror = True
-       if aerror == False: 
-          if row['mora'] == 0:
-            error = "Datos incompletos, por favor revisar" 
-            aerror = True 
-   
+       
        if aerror == False:
           
           conectar = conectUserDatabase(row['parent'])
           mycursor = conectar.cursor(dictionary=True)
           sql = "update solicit set nombres = %s,apellidos = %s,direccion=%s,provincia=%s,telefono=%s,celular=%s,sector=%s,\
-          cedulafiador=%s,nombrefiador=%s,telefonofiador=%s,mora=%s where id = "+"'"+str(row['id'])+"'"
+          cedulafiador=%s,nombrefiador=%s,telefonofiador=%s where id = "+"'"+str(row['id'])+"'"
 
           val = (row['nombrespersonal'],row['apellidos'],row['direccion'],row['provincia'],\
                  row['telefono'],row['celular'],row['sector'],row['cedulafiador'],\
-                 row['nombrefiador'],row['telefonofiador'],row['mora']) 
+                 row['nombrefiador'],row['telefonofiador']) 
 
           mycursor.execute(sql,val)
           data = mycursor.fetchall()         
